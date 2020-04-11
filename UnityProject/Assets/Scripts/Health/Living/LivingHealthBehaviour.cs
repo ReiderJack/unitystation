@@ -74,6 +74,7 @@ public abstract class LivingHealthBehaviour : NetworkBehaviour, IHealth, IFireEx
 	protected GameObject LastDamagedBy;
 
 	public event Action<GameObject> applyDamageEvent;
+	public event Action OnDeathEvent;
 
 	public ConsciousState ConsciousState
 	{
@@ -551,6 +552,7 @@ public abstract class LivingHealthBehaviour : NetworkBehaviour, IHealth, IFireEx
 		{
 			return;
 		}
+		OnDeathEvent?.Invoke();
 		afterDeathDamage = 0;
 		ConsciousState = ConsciousState.DEAD;
 		OnDeathActions();
@@ -767,20 +769,20 @@ public abstract class LivingHealthBehaviour : NetworkBehaviour, IHealth, IFireEx
 	/// figure out what to pass to the client, based on many parameters such as
 	/// role, medical skill (if they get implemented), equipped medical scanners,
 	/// etc. In principle takes care of building the string from start to finish,
-	/// so logic generating examine text can be completely separate from examine 
+	/// so logic generating examine text can be completely separate from examine
 	/// request or netmessage processing.
 	/// </summary>
 	public string Examine(Vector3 worldPos)
 	{
 		var healthFraction = OverallHealth/maxHealth;
 		var healthString  = "";
-		
+
 		if (!IsDead)
 		{
 			if (healthFraction < 0.2f)
 			{
 				healthString = "heavily wounded.";
-			}			
+			}
 			else if (healthFraction < 0.6f)
 			{
 				healthString = "wounded.";

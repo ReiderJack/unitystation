@@ -57,19 +57,26 @@ public class ItemMagBoots : NetworkBehaviour,
 		{
 			itemAttributesV2.AddTrait(CommonTraits.Instance.NoSlip);
 			ServerChangeSpeed(newSpeed);
-
+			player.Script.playerHealth.OnDeathEvent += OnPlayerDeath;
 		}
 		else
 		{
 			itemAttributesV2.RemoveTrait(CommonTraits.Instance.NoSlip);
 			ServerChangeSpeed(initialSpeed);
+			player.Script.playerHealth.OnDeathEvent -= OnPlayerDeath;
 		}
 		//if the ghost NRE will be thrown
 		player.Script.pushPull.ServerSetPushable(!isOn);
 
 	}
 
-
+	private void OnPlayerDeath()
+	{
+		ServerChangeState(this.player);
+		UIActionManager.Toggle(this, false);
+		player.Script.playerHealth.OnDeathEvent -= OnPlayerDeath;
+		player = null;
+	}
 
 	private void SyncState(bool oldVar, bool newVar)
 	{
@@ -158,6 +165,7 @@ public class ItemMagBoots : NetworkBehaviour,
 		playerSync.SpeedClient = speed;
 
 	}
+
 	public void CallActionServer(ConnectedPlayer SentByPlayer)
 	{
 		ServerChangeState(SentByPlayer);
