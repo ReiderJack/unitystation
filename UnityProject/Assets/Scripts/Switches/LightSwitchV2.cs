@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 
-namespace Lighting
-{
 	public class LightSwitchV2 : NetworkBehaviour, ICheckedInteractable<HandApply>
 	{
-		public List<LightSource> listLightSources;
+		public List<LightSourceV2> listLightSources;
 
 		public APC relatedApc;
 
@@ -41,7 +39,6 @@ namespace Lighting
 		private void SyncState(bool oldState, bool newState)
 		{
 			isOn = newState;
-
 		}
 
 		[Server]
@@ -68,4 +65,3 @@ namespace Lighting
 		}
 
 	}
-}

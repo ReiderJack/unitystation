@@ -9,15 +9,8 @@ using UnityEngine;
 public enum LightState
 {
 	None = 0,
-
 	On,
 	Off,
-
-	// Placeholder states, i assume naming would change.
-	MissingBulb,
-	Dirty,
-	Broken,
-
 	TypeCount,
 }
 
@@ -95,21 +88,7 @@ public class LightSource : ObjectTrigger
 		{
 			return;
 		}
-
-		if (Renderer == null)
-		{
-			waitToCheckState = true;
-			if (this != null && gameObject.activeInHierarchy)
-			{
-				StartCoroutine(WaitToTryAgain());
-			}
-
-			return;
-		}
-		else
-		{
-			State = iState ? LightState.On : LightState.Off;
-		}
+		State = iState ? LightState.On : LightState.Off;
 	}
 
 	//this is the method broadcast invoked by LightSwitch to tell this light source what switch is driving it.
@@ -333,9 +312,19 @@ public class LightSource : ObjectTrigger
 	public void SubscribeToSwitch(ref Action<bool> triggerEvent)
 	{
 		Debug.Log("Light source is subscribed");
-		triggerEvent += Trigger;
+		triggerEvent += onSwitchTrigger;
 	}
 
+	public void onSwitchTrigger(bool isOn)
+	{
+		if (wallMount.State == LightMountStates.LightMountState.Broken ||
+		    wallMount.State == LightMountStates.LightMountState.MissingBulb)
+		{
+			return;
+		}
+		wallMount.SwitchChangeState(isOn ? LightState.On : LightState.Off);
+		Trigger(isOn);
+	}
 	// Handle sync failure.
 	private IEnumerator WaitToTryAgain()
 	{

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Lighting;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -69,7 +68,7 @@ using UnityEngine.SceneManagement;
 				// scan all hit objects for ObjectTrigger
 				for (int i = 0; i < hits.Length; i++)
 				{
-					var lightSource = hits[i].transform.GetComponent<LightSource>();
+					var lightSource = hits[i].transform.GetComponent<LightSourceV2>();
 					if (lightSource != null)
 						ToggleLightSource(lightSwtich, lightSource);
 				}
@@ -81,7 +80,7 @@ using UnityEngine.SceneManagement;
 			Selection.activeGameObject = lightSwtich.gameObject;
 		}
 
-		private void ToggleLightSource(LightSwitchV2 lightSwitch, LightSource lightSource)
+		private void ToggleLightSource(LightSwitchV2 lightSwitch, LightSourceV2 lightSource)
 		{
 			if (lightSwitch.listLightSources.Contains(lightSource))
 			{
