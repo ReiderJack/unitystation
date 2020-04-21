@@ -132,6 +132,14 @@ namespace Tests
 			    }
 			    foreach (var connectedDevice in device.ConnectedDevices)
 			    {
+				    if (connectedDevice == null)
+				    {
+					    devicesAPC.Add(device.name);
+					    Logger.Log($"ConnectedDevice is null in \"{device.name}\"", Category.Tests);
+					    report.AppendLine(device.name);
+					    count++;
+				    }
+				    else
 				    if (connectedDevice.RelatedAPC != device)
 				    {
 					    string obStr = connectedDevice.name;
