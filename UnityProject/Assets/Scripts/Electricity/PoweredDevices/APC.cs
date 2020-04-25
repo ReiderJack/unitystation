@@ -78,7 +78,9 @@ public class APC : NetworkBehaviour, ICheckedInteractable<HandApply>, INodeContr
 	private void OnDisable()
 	{
 		if (ElectricalNodeControl == null) return;
-		ElectricalManager.Instance.electricalSync.PoweredDevices.Remove(ElectricalNodeControl);
+		if(ElectricalManager.Instance == null)return;
+		if(ElectricalManager.Instance.electricalSync == null) return;
+		ElectricalManager.Instance.electricalSync.PoweredDevices?.Remove(ElectricalNodeControl);
 	}
 
 	public bool WillInteract(HandApply interaction, NetworkSide side)
