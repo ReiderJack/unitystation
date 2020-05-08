@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class Autolathe : NetworkBehaviour, ICheckedInteractable<HandApply>, IServerSpawn, IServerDespawn
+public class Autolathe : NetworkBehaviour, ICheckedInteractable<HandApply>, IServerSpawn, IServerDespawn, IAPCPowered
 {
+
+	public PowerStates PoweredState;
+
 	[SyncVar(hook = nameof(SyncSprite))]
 	private AutolatheState stateSync;
 
@@ -159,9 +162,12 @@ public class Autolathe : NetworkBehaviour, ICheckedInteractable<HandApply>, ISer
 	{
 		if (materialStorage.TryRemoveCM3Materials(product.materialToAmounts))
 		{
-			currentProduction = ProcessProduction(product.Product, product.ProductionTime);
-			StartCoroutine(currentProduction);
-			return true;
+			if (APCPoweredDevice.IsOn(PoweredState))
+			{
+				currentProduction = ProcessProduction(product.Product, product.ProductionTime);
+				StartCoroutine(currentProduction);
+				return true;
+			}
 		}
 
 		return false;
@@ -222,5 +228,12 @@ public class Autolathe : NetworkBehaviour, ICheckedInteractable<HandApply>, ISer
 		}
 
 		DropAllMaterials();
+	}
+
+	public void PowerNetworkUpdate(float Voltage) { }
+
+	public void StateUpdate(PowerStates State)
+	{
+		PoweredState = State;
 	}
 }

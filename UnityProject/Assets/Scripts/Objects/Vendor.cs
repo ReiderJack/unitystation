@@ -8,13 +8,14 @@ using UnityEngine.Events;
 /// when clicking on vendor with a VendingRestock item in hand.
 /// </summary>
 [RequireComponent(typeof(HasNetworkTab))]
-public class Vendor : MonoBehaviour, ICheckedInteractable<HandApply>
+public class Vendor : MonoBehaviour, ICheckedInteractable<HandApply>, IAPCPowered
 {
 	public List<VendorItem> VendorContent = new List<VendorItem>();
 	public Color HullColor = Color.white;
 	public bool EjectObjects = false;
 	public EjectDirection EjectDirection = EjectDirection.None;
 	public VendorUpdateEvent OnRestockUsed = new VendorUpdateEvent();
+	public PowerStates CurrentPowerState;
 
 	private void Awake()
 	{
@@ -46,6 +47,15 @@ public class Vendor : MonoBehaviour, ICheckedInteractable<HandApply>
 			OnRestockUsed?.Invoke();
 			Inventory.ServerDespawn(interaction.HandSlot);
 		}
+	}
+
+	public void PowerNetworkUpdate(float Voltage)
+	{
+	}
+
+	public void StateUpdate(PowerStates State)
+	{
+		CurrentPowerState = State;
 	}
 }
 

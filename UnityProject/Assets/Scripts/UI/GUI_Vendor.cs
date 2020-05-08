@@ -100,6 +100,7 @@ public class GUI_Vendor : NetTab
 	public void VendItem(VendorItem item)
 	{
 		if (item == null || vendor == null) return;
+		if (!APCPoweredDevice.IsOn(vendor.CurrentPowerState))  return;
 		VendorItem itemToSpawn = null;
 		foreach (var vendorItem in vendorContent)
 		{
