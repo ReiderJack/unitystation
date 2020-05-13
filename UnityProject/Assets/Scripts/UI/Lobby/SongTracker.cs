@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using SO.Audio;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,7 +45,7 @@ public class SongTracker : MonoBehaviour
 	{
 		if (!PlayingRandomPlayList || CustomNetworkManager.isHeadless) return;
 
-		if (!SoundManager.isLobbyMusicPlaying())
+		if (!SOManagerMusic.Instance.isLobbyMusicPlaying())
 		{
 			currentWaitTime += Time.deltaTime;
 			if (currentWaitTime >= timeBetweenSongs)
@@ -69,7 +70,7 @@ public class SongTracker : MonoBehaviour
 	{
 		PlayingRandomPlayList = false;
 		ToggleUI(false);
-		SoundManager.StopMusic();
+		SOManagerMusic.Instance.StopMusic();
 	}
 
 	void ToggleUI(bool isActive)
@@ -105,12 +106,12 @@ public class SongTracker : MonoBehaviour
 			case 0:
 				speakerImage.sprite = speakerOff;
 				speakerImage.color = offColor;
-				SoundManager.Instance.ToggleMusicMute(true);
+				SOManagerMusic.Instance.ToggleMusicMute(true);
 				break;
 			case 1:
 				speakerImage.sprite = speakerOn;
 				speakerImage.color = onColor;
-				SoundManager.Instance.ToggleMusicMute(false);
+				SOManagerMusic.Instance.ToggleMusicMute(false);
 				break;
 		}
 	}
@@ -119,7 +120,7 @@ public class SongTracker : MonoBehaviour
 	{
 		if(CustomNetworkManager.isHeadless) return;
 
-		var songInfo = SoundManager.PlayRandomTrack();
+		var songInfo = SOManagerMusic.Instance.PlayRandomTrack();
 		trackName.text = songInfo[0];
 		// If the name of the artist is included, add it as well
 		if (songInfo.Length == 2)

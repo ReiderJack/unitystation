@@ -1,5 +1,6 @@
 using UnityEngine;
 using Machines;
+using SO.Audio;
 
 /// <summary>
 /// In order for the SingletonScriptableObject to work, the singleton instance must
@@ -25,4 +26,5 @@ public class ScriptableObjectSingletons : MonoBehaviour
 	public MachinePartsItemTraits MachinePartsItemTraits;
 	public MachinePartsPrefabs MachinePartsPrefabs;
 	public SOAdminJobsList AdminJobsList;
+	public SOManagerMusic ManagerMusic;
 }
