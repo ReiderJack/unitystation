@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: SOManagerMusic
   m_EditorClassIdentifier: 
   MusicMixer: {fileID: 24300001, guid: 94208a0928046438d9b8a00796e7a5a7, type: 2}
-  currentLobbyAudioSource: {fileID: 2538525614273923828, guid: 62b7a83d87b2eb2438dbfe7c8f71f0a3,
-    type: 3}
+  currentLobbyAudioSource: {fileID: 0}
   MusicVolume: 1
   musicClips:
   - {fileID: 8300000, guid: 4649c913777e17c4aaff7105650ce2f8, type: 3}
+  - {fileID: 8300000, guid: 23610fdabd00707448f98769221159d6, type: 3}
+  - {fileID: 8300000, guid: 0ef648dd0d8ac0bea966686c97e9945d, type: 3}

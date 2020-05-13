@@ -31,9 +31,6 @@ public class SoundManager : MonoBehaviour
 	private List<AudioSource> ambientTracks = new List<AudioSource>();
 	public AudioSource ambientTrack;
 
-	// Use this for initialization
-	//public AudioSource[] sounds;
-	public List<AudioSource> musicTracks = new List<AudioSource>();
 
 	[SerializeField] private SongTracker songTracker = null;
 
@@ -109,12 +106,6 @@ public class SoundManager : MonoBehaviour
 			if (audioSource.gameObject.CompareTag("AmbientSound"))
 			{
 				ambientTracks.Add(audioSource);
-				continue;
-			}
-
-			if (audioSource.gameObject.CompareTag("Music"))
-			{
-				musicTracks.Add(audioSource);
 				continue;
 			}
 

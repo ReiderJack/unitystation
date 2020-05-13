@@ -26,5 +26,4 @@ public class ScriptableObjectSingletons : MonoBehaviour
 	public MachinePartsItemTraits MachinePartsItemTraits;
 	public MachinePartsPrefabs MachinePartsPrefabs;
 	public SOAdminJobsList AdminJobsList;
-	public SOManagerMusic ManagerMusic;
 }
