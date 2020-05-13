@@ -74,6 +74,7 @@ public class MusicLobbyManager : MonoBehaviour
 			volume = 0f;
 		}
 
+		currentLobbyAudioSource.outputAudioMixerGroup = MusicMixer;
 		currentLobbyAudioSource.volume = volume;
 		currentLobbyAudioSource.Play();
 		songInfo = currentLobbyAudioSource.clip.name.Split('_'); // Spliting to get the song and artist name
