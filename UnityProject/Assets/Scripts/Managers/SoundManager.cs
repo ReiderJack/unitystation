@@ -31,14 +31,6 @@ public class SoundManager : MonoBehaviour
 	private List<AudioSource> ambientTracks = new List<AudioSource>();
 	public AudioSource ambientTrack;
 
-
-	[SerializeField] private SongTracker songTracker = null;
-
-	/// <summary>
-	/// For controlling the song play list. Includes random shuffle and auto play
-	/// </summary>
-	public static SongTracker SongTracker => soundManager.songTracker;
-
 	[SerializeField] private GameObject soundSpawnPrefab = null;
 	private List<SoundSpawn> pooledSources = new List<SoundSpawn>();
 

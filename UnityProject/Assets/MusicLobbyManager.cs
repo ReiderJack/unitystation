@@ -8,12 +8,6 @@ using Random = UnityEngine.Random;
 
 public class MusicLobbyManager : MonoBehaviour
 {
-	[SerializeField]
-	private  AudioClip[] musicClips;
-	private  AudioSource currentLobbyAudioSource;
-
-	private  bool isMusicMute;
-
 	private static MusicLobbyManager musicLobbyManager;
 	public static MusicLobbyManager Instance
 	{
@@ -32,6 +26,21 @@ public class MusicLobbyManager : MonoBehaviour
 
 	[Range(0f, 1f)]
 	public  float MusicVolume = 1;
+
+	[SerializeField]
+	private SongTracker songTracker = null;
+
+	/// <summary>
+	/// For controlling the song play list. Includes random shuffle and auto play
+	/// </summary>
+	public static SongTracker SongTracker => musicLobbyManager.songTracker;
+
+	[SerializeField]
+	private  AudioClip[] musicClips;
+
+	private  bool isMusicMute;
+
+	private  AudioSource currentLobbyAudioSource;
 
 	private void OnEnable()
 	{
