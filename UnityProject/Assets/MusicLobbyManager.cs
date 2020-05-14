@@ -36,7 +36,7 @@ public class MusicLobbyManager : MonoBehaviour
 	public SongTracker SongTracker => musicLobbyManager.songTracker;
 
 	[SerializeField]
-	private  AudioClip[] musicClips;
+	private  AudioClipsList musicClips;
 
 	private  bool isMusicMute;
 
@@ -60,8 +60,7 @@ public class MusicLobbyManager : MonoBehaviour
 		StopMusic();
 		String[] songInfo;
 
-		int randTrack = Random.Range(0, musicClips.Length);
-		currentLobbyAudioSource.clip = musicClips[randTrack];
+		currentLobbyAudioSource.clip = musicClips.GetRandomClip();
 		var volume = MusicVolume;
 		if (isMusicMute)
 		{

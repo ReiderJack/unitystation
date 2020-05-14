@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86a34500d3034bef8d50bf6f5898e97f, type: 3}
+  m_Name: LobbyMusic
+  m_EditorClassIdentifier: 
+  audioClips:
+  - {fileID: 8300000, guid: 027e3abcca5fb5341822446fc71b5155, type: 3}
+  - {fileID: 8300000, guid: 837985f0b74b9724899aea536aba94a4, type: 3}
+  - {fileID: 8300000, guid: 0ef648dd0d8ac0bea966686c97e9945d, type: 3}
+  - {fileID: 8300000, guid: 23610fdabd00707448f98769221159d6, type: 3}
+  - {fileID: 8300000, guid: 4649c913777e17c4aaff7105650ce2f8, type: 3}
+  - {fileID: 0}
