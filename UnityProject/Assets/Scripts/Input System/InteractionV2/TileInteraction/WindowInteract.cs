@@ -28,7 +28,8 @@ public class WindowInteract : TileInteraction
 		{
 			Chat.AddActionMsgToChat(interaction.Performer,
 				$"You knock on the {interaction.BasicTile.DisplayName}.", $"{interaction.Performer.ExpensiveName()} knocks on the {interaction.BasicTile.DisplayName}.");
-			SoundManager.GlassknockAtPosition(interaction.WorldPositionTarget, interaction.Performer);
+			SoundManager.PlayNetworkedAtPos("GlassKnock", interaction.WorldPositionTarget, Random.Range(0.7f, 1.2f),
+				Global: false, polyphonic: true, sourceObj: interaction.Performer);
 		}
 		else
 		{

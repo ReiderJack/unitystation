@@ -330,18 +330,6 @@ public class SoundManager : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Gets the sound for playing locally and allowing full control over it without
-	/// having to go through sound manager. For playing local sounds only (such as in UI).
-	/// </summary>
-	/// <param name="name">Accepts "#" wildcards for sound variations. (Example: "Punch#")</param>
-	/// <returns>audiosource of the sound</returns>
-	public static AudioSource GetSound(string name)
-	{
-		name = Instance.ResolveSoundPattern(name);
-		return Instance.sounds[name];
-	}
-
-	/// <summary>
 	/// Play sound locally.
 	/// Accepts "#" wildcards for sound variations. (Example: "Punch#")
 	/// </summary>
@@ -373,15 +361,6 @@ public class SoundManager : MonoBehaviour
 		{
 			source.PlayNormally();
 		}
-	}
-
-	/// <summary>
-	/// Play Glassknock at given world position.
-	/// </summary>
-	public static void GlassknockAtPosition(Vector3 worldPos, GameObject performer = null)
-	{
-		PlayNetworkedAtPos("GlassKnock", worldPos, (float) Instance.GetRandomNumber(0.7d, 1.2d),
-			Global: false, polyphonic: true, sourceObj: performer);
 	}
 
 	/// <summary>
@@ -547,11 +526,6 @@ public class SoundManager : MonoBehaviour
 		AudioListener.volume = volume;
 		PlayerPrefs.SetFloat(PlayerPrefKeys.MasterVolumeKey, volume);
 		PlayerPrefs.Save();
-	}
-
-	public double GetRandomNumber(double minimum, double maximum)
-	{
-		return RANDOM.NextDouble() * (maximum - minimum) + minimum;
 	}
 
 	/// <summary>
