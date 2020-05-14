@@ -366,7 +366,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	[TargetRpc]
 	public void TargetStopMusic(NetworkConnection target)
 	{
-		MusicLobbyManager.SongTracker.Stop();
+		MusicLobbyManager.Instance.SongTracker.Stop();
 	}
 
 	/// <summary>

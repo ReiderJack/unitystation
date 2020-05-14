@@ -83,7 +83,7 @@ public class GUI_PlayerJobs : MonoBehaviour
 		{
 			// Job selection is finished, close the window.
 			waitForSpawnTimer = 0;
-			MusicLobbyManager.SongTracker.Stop();
+			MusicLobbyManager.Instance.SongTracker.Stop();
 			gameObject.SetActive(false);
 			waitMessage.SetActive(false);
 			screen_Jobs.SetActive(true);

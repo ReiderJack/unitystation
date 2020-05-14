@@ -106,7 +106,7 @@ public class ControlDisplays : MonoBehaviour
 		panelRight.gameObject.SetActive(true);
 		rightClickManager.SetActive(true);
 		preRoundWindow.gameObject.SetActive(false);
-		MusicLobbyManager.SongTracker.Stop();
+		MusicLobbyManager.Instance.SongTracker.Stop();
 	}
 
 	void GhostUI()
@@ -120,7 +120,7 @@ public class ControlDisplays : MonoBehaviour
 		panelRight.gameObject.SetActive(true);
 		rightClickManager.SetActive(true);
 		preRoundWindow.gameObject.SetActive(false);
-		MusicLobbyManager.SongTracker.Stop();
+		MusicLobbyManager.Instance.SongTracker.Stop();
 	}
 
 	/// <summary>
@@ -170,7 +170,7 @@ public class ControlDisplays : MonoBehaviour
 	public void SetScreenForLobby()
 	{
 		SoundManager.StopAmbient();
-		MusicLobbyManager.SongTracker.StartPlayingRandomPlaylist();
+		MusicLobbyManager.Instance.SongTracker.StartPlayingRandomPlaylist();
 		ResetUI(); //Make sure UI is back to default for next play
 		UIManager.PlayerHealthUI.gameObject.SetActive(false);
 		UIActionManager.Instance.OnRoundEnd();

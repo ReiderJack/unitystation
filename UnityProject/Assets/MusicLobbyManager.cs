@@ -33,7 +33,7 @@ public class MusicLobbyManager : MonoBehaviour
 	/// <summary>
 	/// For controlling the song play list. Includes random shuffle and auto play
 	/// </summary>
-	public static SongTracker SongTracker => musicLobbyManager.songTracker;
+	public SongTracker SongTracker => musicLobbyManager.songTracker;
 
 	[SerializeField]
 	private  AudioClip[] musicClips;
