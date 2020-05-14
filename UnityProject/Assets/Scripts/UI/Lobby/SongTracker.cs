@@ -116,7 +116,7 @@ public class SongTracker : MonoBehaviour
 		}
 	}
 
-	void PlayRandomTrack()
+	public void PlayRandomTrack()
 	{
 		if(CustomNetworkManager.isHeadless) return;
 

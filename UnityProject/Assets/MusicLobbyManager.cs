@@ -22,7 +22,7 @@ public class MusicLobbyManager : MonoBehaviour
 	public AudioMixerGroup MusicMixer;
 
 	[Range(0f, 1f)]
-	private float musicVolume;
+	private float musicVolume = 1;
 
 	public float MusicVolume
 	{
