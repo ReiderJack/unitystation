@@ -8,6 +8,8 @@ using UnityEngine.UI;
 /// </summary>
 public class SongTracker : MonoBehaviour
 {
+	[SerializeField] private Slider sliderMusic = null;
+	[SerializeField] private Button buttonRandomTrack = null;
 	[SerializeField] private Text trackName = null;
 	[SerializeField] private Text artist = null;
 	[SerializeField] private Image speakerImage = null;
@@ -75,6 +77,8 @@ public class SongTracker : MonoBehaviour
 
 	void ToggleUI(bool isActive)
 	{
+		sliderMusic.gameObject.SetActive(isActive);
+		buttonRandomTrack.gameObject.SetActive(isActive);
 		trackName.gameObject.SetActive(isActive);
 		artist.gameObject.SetActive(isActive);
 		speakerImage.gameObject.SetActive(isActive);
@@ -131,10 +135,5 @@ public class SongTracker : MonoBehaviour
 		{
 			artist.text = "";
 		}
-	}
-
-	public void OnSliderChanged(float sliderValue)
-	{
-		MusicLobbyManager.Instance.MusicVolume = sliderValue;
 	}
 }

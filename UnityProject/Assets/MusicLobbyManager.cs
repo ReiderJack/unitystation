@@ -2,6 +2,7 @@
 using SO.Audio;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class MusicLobbyManager : MonoBehaviour
 {
@@ -19,20 +20,10 @@ public class MusicLobbyManager : MonoBehaviour
 		}
 	}
 
-	public AudioMixerGroup MusicMixer;
+	public AudioMixerGroup MusicMixer = null;
 
 	[Range(0f, 1f)]
 	private float musicVolume = 1;
-
-	public float MusicVolume
-	{
-		get => musicVolume;
-		set
-		{
-			musicVolume = value;
-			currentLobbyAudioSource.volume = value;
-		}
-	}
 
 	[SerializeField]
 	private SongTracker songTracker = null;
@@ -43,22 +34,30 @@ public class MusicLobbyManager : MonoBehaviour
 	public SongTracker SongTracker => musicLobbyManager.songTracker;
 
 	[SerializeField]
-	private  AudioClipsList musicClips;
+	private Slider musicLobbySlider = null;
 
-	private  bool isMusicMute;
+	[SerializeField]
+	private  AudioClipsList musicClips = null;
 
-	private  AudioSource currentLobbyAudioSource;
+	private  bool isMusicMute = false;
+
+	private AudioSource currentLobbyAudioSource;
 
 	private void OnEnable()
 	{
-		if (PlayerPrefs.HasKey(PlayerPrefKeys.MuteMusic))
-		{
-			isMusicMute = PlayerPrefs.GetInt(PlayerPrefKeys.MuteMusic) == 0;
-		}
-
 		if (currentLobbyAudioSource == null)
 		{
 			currentLobbyAudioSource = GetComponent<AudioSource>();
+		}
+
+		if (PlayerPrefs.HasKey(PlayerPrefKeys.MusicLobbyVolumeKey))
+		{
+			musicVolume = PlayerPrefs.GetFloat(PlayerPrefKeys.MusicLobbyVolumeKey);
+		}
+
+		if (PlayerPrefs.HasKey(PlayerPrefKeys.MuteMusic))
+		{
+			isMusicMute = PlayerPrefs.GetInt(PlayerPrefKeys.MuteMusic) == 0;
 		}
 	}
 
@@ -68,7 +67,7 @@ public class MusicLobbyManager : MonoBehaviour
 		String[] songInfo;
 
 		currentLobbyAudioSource.clip = musicClips.GetRandomClip();
-		var volume = MusicVolume;
+		var volume = musicVolume;
 		if (isMusicMute)
 		{
 			volume = 0f;
@@ -94,7 +93,7 @@ public class MusicLobbyManager : MonoBehaviour
 		}
 		else
 		{
-			var vol = 255 * MusicVolume;
+			var vol = 255 * musicVolume;
 			Synth.Instance.SetMusicVolume((byte) (int) vol);
 		}
 	}
@@ -116,5 +115,15 @@ public class MusicLobbyManager : MonoBehaviour
 		{
 			return false;
 		}
+	}
+
+
+	public void OnSliderChanged()
+	{
+		var sliderValue = musicLobbySlider.value;
+		musicVolume = sliderValue;
+		currentLobbyAudioSource.volume = sliderValue;
+		PlayerPrefs.SetFloat(PlayerPrefKeys.MasterVolumeKey, sliderValue);
+		PlayerPrefs.Save();
 	}
 }

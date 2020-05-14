@@ -34,6 +34,12 @@
 	public static string MasterVolumeKey = "MasterVol";
 
 	/// <summary>
+	/// MusicLobbyMixer Volume level
+	/// 0 - 1f
+	/// </summary>
+	public static string MusicLobbyVolumeKey = "MusicLobbyVol";
+
+	/// <summary>
 	/// TTS Toggle Pref.
 	/// 0 = disabled
 	/// 1 = enabled
