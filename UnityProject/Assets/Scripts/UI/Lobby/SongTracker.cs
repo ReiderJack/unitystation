@@ -132,4 +132,9 @@ public class SongTracker : MonoBehaviour
 			artist.text = "";
 		}
 	}
+
+	public void OnSliderChanged(float sliderValue)
+	{
+		MusicLobbyManager.Instance.MusicVolume = sliderValue;
+	}
 }

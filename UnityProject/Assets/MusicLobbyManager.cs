@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using SO.Audio;
 using UnityEngine;
 using UnityEngine.Audio;
-using Random = UnityEngine.Random;
 
 public class MusicLobbyManager : MonoBehaviour
 {
@@ -25,7 +22,17 @@ public class MusicLobbyManager : MonoBehaviour
 	public AudioMixerGroup MusicMixer;
 
 	[Range(0f, 1f)]
-	public  float MusicVolume = 1;
+	private float musicVolume;
+
+	public float MusicVolume
+	{
+		get => musicVolume;
+		set
+		{
+			musicVolume = value;
+			currentLobbyAudioSource.volume = value;
+		}
+	}
 
 	[SerializeField]
 	private SongTracker songTracker = null;
