@@ -120,7 +120,7 @@ public class MusicLobbyManager : MonoBehaviour
 	{
 		var sliderValue = musicLobbySlider.value;
 		currentLobbyAudioSource.volume = sliderValue;
-		PlayerPrefs.SetFloat(PlayerPrefKeys.MasterVolumeKey, sliderValue);
+		PlayerPrefs.SetFloat(PlayerPrefKeys.MusicLobbyVolumeKey, sliderValue);
 		PlayerPrefs.Save();
 	}
 }
