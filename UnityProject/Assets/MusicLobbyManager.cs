@@ -22,9 +22,6 @@ public class MusicLobbyManager : MonoBehaviour
 
 	public AudioMixerGroup MusicMixer = null;
 
-	[Range(0f, 1f)]
-	private float musicVolume = 1;
-
 	[SerializeField]
 	private SongTracker songTracker = null;
 
@@ -52,7 +49,8 @@ public class MusicLobbyManager : MonoBehaviour
 
 		if (PlayerPrefs.HasKey(PlayerPrefKeys.MusicLobbyVolumeKey))
 		{
-			musicVolume = PlayerPrefs.GetFloat(PlayerPrefKeys.MusicLobbyVolumeKey);
+			currentLobbyAudioSource.volume = PlayerPrefs.GetFloat(PlayerPrefKeys.MusicLobbyVolumeKey);
+			musicLobbySlider.value = PlayerPrefs.GetFloat(PlayerPrefKeys.MusicLobbyVolumeKey);
 		}
 
 		if (PlayerPrefs.HasKey(PlayerPrefKeys.MuteMusic))
@@ -67,7 +65,7 @@ public class MusicLobbyManager : MonoBehaviour
 		String[] songInfo;
 
 		currentLobbyAudioSource.clip = musicClips.GetRandomClip();
-		var volume = musicVolume;
+		var volume = musicLobbySlider.value;
 		if (isMusicMute)
 		{
 			volume = 0f;
@@ -93,7 +91,7 @@ public class MusicLobbyManager : MonoBehaviour
 		}
 		else
 		{
-			var vol = 255 * musicVolume;
+			var vol = 255 * musicLobbySlider.value;
 			Synth.Instance.SetMusicVolume((byte) (int) vol);
 		}
 	}
@@ -121,7 +119,6 @@ public class MusicLobbyManager : MonoBehaviour
 	public void OnSliderChanged()
 	{
 		var sliderValue = musicLobbySlider.value;
-		musicVolume = sliderValue;
 		currentLobbyAudioSource.volume = sliderValue;
 		PlayerPrefs.SetFloat(PlayerPrefKeys.MasterVolumeKey, sliderValue);
 		PlayerPrefs.Save();
