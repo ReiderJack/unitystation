@@ -22,16 +22,8 @@ public class SoundManager : MonoBehaviour
 
 	private readonly Dictionary<string, string[]> soundPatterns = new Dictionary<string, string[]>();
 
-	private static readonly System.Random RANDOM = new System.Random();
-
-	private static AudioSource currentLobbyAudioSource;
-
-	private static bool Step;
-
-	private List<AudioSource> ambientTracks = new List<AudioSource>();
-	public AudioSource ambientTrack;
-
 	[SerializeField] private GameObject soundSpawnPrefab = null;
+
 	private List<SoundSpawn> pooledSources = new List<SoundSpawn>();
 
 	public static SoundManager Instance
@@ -46,8 +38,6 @@ public class SoundManager : MonoBehaviour
 			return soundManager;
 		}
 	}
-
-	[Range(0f, 1f)] public float MusicVolume = 1;
 
 	[SerializeField] private string[] RoundEndSounds = new string[]
 	{
@@ -68,17 +58,6 @@ public class SoundManager : MonoBehaviour
 
 	private void Init()
 	{
-
-		//Ambient Volume Preference
-		if (PlayerPrefs.HasKey(PlayerPrefKeys.AmbientVolumeKey))
-		{
-			AmbientVolume(PlayerPrefs.GetFloat(PlayerPrefKeys.AmbientVolumeKey));
-		}
-		else
-		{
-			AmbientVolume(1f);
-		}
-
 		//Master Volume
 		if (PlayerPrefs.HasKey(PlayerPrefKeys.MasterVolumeKey))
 		{
@@ -95,11 +74,6 @@ public class SoundManager : MonoBehaviour
 		for (int i = 0; i < audioSources.Length; i++)
 		{
 			var audioSource = audioSources[i];
-			if (audioSource.gameObject.CompareTag("AmbientSound"))
-			{
-				ambientTracks.Add(audioSource);
-				continue;
-			}
 
 			if (audioSource.gameObject.CompareTag("SoundFX"))
 			{
@@ -457,58 +431,6 @@ public class SoundManager : MonoBehaviour
 		}
 	}
 
-	public static void StopAmbient()
-	{
-		foreach (AudioSource source in Instance.ambientTracks)
-		{
-			source.Stop();
-		}
-	}
-
-	public static void PlayAmbience(string ambientTrackName)
-	{
-		void PlayAmbientTrack(AudioSource track)
-		{
-			Logger.Log($"Playing ambient track: {track.name}", Category.SoundFX);
-			Instance.ambientTrack = track;
-			//Ambient Volume
-			if (PlayerPrefs.HasKey("AmbientVol"))
-			{
-				track.volume = Mathf.Clamp(PlayerPrefs.GetFloat("AmbientVol"), 0f, 0.25f);
-			}
-
-			track.Play();
-		}
-
-		foreach (var track in Instance.ambientTracks)
-		{
-			if (track.name == ambientTrackName)
-			{
-				PlayAmbientTrack(track);
-			}
-			else
-			{
-				track.Stop();
-			}
-		}
-	}
-
-	/// <summary>
-	/// Sets all ambient tracks to a certain volume
-	/// </summary>
-	/// <param name="volume"></param>
-	public static void AmbientVolume(float volume)
-	{
-		volume = Mathf.Clamp(volume, 0f, 0.25f);
-		foreach (AudioSource s in Instance.ambientTracks)
-		{
-			s.volume = volume;
-		}
-
-		PlayerPrefs.SetFloat(PlayerPrefKeys.AmbientVolumeKey, volume);
-		PlayerPrefs.Save();
-	}
-
 	/// <summary>
 	/// Sets all Sounds volume
 	/// </summary>
@@ -525,7 +447,7 @@ public class SoundManager : MonoBehaviour
 	/// </summary>
 	public void PlayRandomRoundEndSound()
 	{
-		var rand = RANDOM.Next(RoundEndSounds.Length);
+		var rand = new System.Random().Next(RoundEndSounds.Length);
 		PlayNetworked(RoundEndSounds[rand], 1f);
 	}
 

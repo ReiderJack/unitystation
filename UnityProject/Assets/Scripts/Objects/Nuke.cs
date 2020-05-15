@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using UnityEngine;
 using Mirror;
+using SoundManagers;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 /// <summary>
 /// Main component for nuke.
 /// </summary>
-public class Nuke : NetworkBehaviour, ICheckedInteractable<HandApply>,IAdminInfo 
+public class Nuke : NetworkBehaviour, ICheckedInteractable<HandApply>,IAdminInfo
 {
 	public NukeTimerEvent OnTimerUpdate = new NukeTimerEvent();
 
@@ -122,7 +123,7 @@ public class Nuke : NetworkBehaviour, ICheckedInteractable<HandApply>,IAdminInfo
 		{
 			GameManager.Instance.EndRound();
 		}
-		
+
 	}
 
 	//Server telling the nukes to explode
@@ -134,7 +135,7 @@ public class Nuke : NetworkBehaviour, ICheckedInteractable<HandApply>,IAdminInfo
 		}
 		detonated = true;
 
-		SoundManager.StopAmbient();
+		AmbienceSoundManager.StopAmbient();
 		//turning off all the UI except for the right panel
 		UIManager.PlayerHealthUI.gameObject.SetActive(false);
 		UIManager.Display.hudBottomHuman.gameObject.SetActive(false);

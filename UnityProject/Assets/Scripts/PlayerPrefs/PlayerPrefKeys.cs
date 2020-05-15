@@ -40,6 +40,12 @@
 	public static string MusicLobbyVolumeKey = "MusicLobbyVol";
 
 	/// <summary>
+	/// Sound Effects Volume level
+	/// 0 - 1f
+	/// </summary>
+	public static string SoundEffectsVolumeKey = "SoundEffectsVol";
+
+	/// <summary>
 	/// TTS Toggle Pref.
 	/// 0 = disabled
 	/// 1 = enabled

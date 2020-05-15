@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using SoundManagers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,15 +17,23 @@ namespace Unitystation.Options
 		[SerializeField]
 		private Slider masterSlider = null;
 
+		[SerializeField]
+		private Slider soundEffectsSlider = null;
+
 		void OnEnable()
         {
             Refresh();
 
 		}
 
+		public void OnSoundEffectsVolumeChange()
+		{
+			SoundEffectsManager.OnSoundEffectsVolumeChange(soundEffectsSlider.value);
+		}
+
         public void OnAmbientVolumeChange()
         {
-            SoundManager.AmbientVolume(ambientSlider.value);
+	        AmbienceSoundManager.AmbientVolume(ambientSlider.value);
         }
 
 		public void OnMasterVolumeChange()
@@ -42,8 +51,8 @@ namespace Unitystation.Options
             ambientSlider.value = PlayerPrefs.GetFloat(PlayerPrefKeys.AmbientVolumeKey);
             ttsToggle.isOn = PlayerPrefs.GetInt(PlayerPrefKeys.TTSToggleKey) == 1;
 			masterSlider.value = PlayerPrefs.GetFloat(PlayerPrefKeys.MasterVolumeKey);
-
-		}
+			soundEffectsSlider.value = PlayerPrefs.GetFloat(PlayerPrefKeys.SoundEffectsVolumeKey);
+        }
 
         public void ResetDefaults()
         {
@@ -52,8 +61,9 @@ namespace Unitystation.Options
                 () =>
                 {
                     UIManager.ToggleTTS(false);
-                    SoundManager.AmbientVolume(1f);
+                    AmbienceSoundManager.AmbientVolume(1f);
 					AudioListener.volume = 1;
+					SoundEffectsManager.Volume = 1;
                     Refresh();
                 },
                 "Reset"

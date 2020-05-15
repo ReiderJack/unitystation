@@ -11,7 +11,7 @@ public class MusicLobbyManager : MonoBehaviour
 	{
 		get
 		{
-			if (!musicLobbyManager)
+			if (musicLobbyManager == null)
 			{
 				musicLobbyManager = FindObjectOfType<MusicLobbyManager>();
 			}
@@ -49,7 +49,6 @@ public class MusicLobbyManager : MonoBehaviour
 
 		if (PlayerPrefs.HasKey(PlayerPrefKeys.MusicLobbyVolumeKey))
 		{
-			currentLobbyAudioSource.volume = PlayerPrefs.GetFloat(PlayerPrefKeys.MusicLobbyVolumeKey);
 			musicLobbySlider.value = PlayerPrefs.GetFloat(PlayerPrefKeys.MusicLobbyVolumeKey);
 		}
 
@@ -59,33 +58,26 @@ public class MusicLobbyManager : MonoBehaviour
 		}
 	}
 
-	public  String[] PlayRandomTrack()
+	public String[] PlayRandomTrack()
 	{
 		StopMusic();
-		String[] songInfo;
 
+		currentLobbyAudioSource.mute = isMusicMute;
 		currentLobbyAudioSource.clip = musicClips.GetRandomClip();
-		var volume = musicLobbySlider.value;
-		if (isMusicMute)
-		{
-			volume = 0f;
-		}
-
 		currentLobbyAudioSource.outputAudioMixerGroup = MusicMixer;
-		currentLobbyAudioSource.volume = volume;
+		currentLobbyAudioSource.volume = musicLobbySlider.value;
 		currentLobbyAudioSource.Play();
-		songInfo = currentLobbyAudioSource.clip.name.Split('_');
 
-		return songInfo;
+		return currentLobbyAudioSource.clip.name.Split('_');
 	}
 
-	public  void ToggleMusicMute(bool mute)
+	public void ToggleMusicMute(bool mute)
 	{
 		isMusicMute = mute;
 
 		currentLobbyAudioSource.mute = mute;
 
-		if (mute)
+		/*if (mute)
 		{
 			Synth.Instance.SetMusicVolume(Byte.MinValue);
 		}
@@ -93,10 +85,10 @@ public class MusicLobbyManager : MonoBehaviour
 		{
 			var vol = 255 * musicLobbySlider.value;
 			Synth.Instance.SetMusicVolume((byte) (int) vol);
-		}
+		}*/
 	}
 
-	public  void StopMusic()
+	public void StopMusic()
 	{
 		currentLobbyAudioSource.Stop();
 
@@ -114,7 +106,6 @@ public class MusicLobbyManager : MonoBehaviour
 			return false;
 		}
 	}
-
 
 	public void OnSliderChanged()
 	{
