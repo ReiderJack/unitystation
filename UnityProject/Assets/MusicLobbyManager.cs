@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class MusicLobbyManager : MonoBehaviour
 {
-	private static MusicLobbyManager musicLobbyManager;
+	private static MusicLobbyManager musicLobbyManager = null;
+
 	public static MusicLobbyManager Instance
 	{
 		get
@@ -22,34 +23,27 @@ public class MusicLobbyManager : MonoBehaviour
 
 	public AudioMixerGroup MusicMixer = null;
 
-	[SerializeField]
-	private SongTracker songTracker = null;
+	[SerializeField] private SongTracker songTracker = null;
 
 	/// <summary>
 	/// For controlling the song play list. Includes random shuffle and auto play
 	/// </summary>
 	public SongTracker SongTracker => musicLobbyManager.songTracker;
 
-	[SerializeField]
-	private Slider musicLobbySlider = null;
+	[SerializeField] private Slider musicLobbySlider = null;
 
-	[SerializeField]
-	private  AudioClipsList musicClips = null;
+	[SerializeField] private AudioClipsList musicClips = null;
 
-	private  bool isMusicMute = false;
+	private bool isMusicMute = false;
 
-	private AudioSource currentLobbyAudioSource;
+	private AudioSource currentLobbyAudioSource = null;
 
 	private void OnEnable()
 	{
-		if (currentLobbyAudioSource == null)
-		{
-			currentLobbyAudioSource = GetComponent<AudioSource>();
-		}
+		currentLobbyAudioSource = GetComponent<AudioSource>();
 
 		if (PlayerPrefs.HasKey(PlayerPrefKeys.MusicLobbyVolumeKey))
 		{
-			currentLobbyAudioSource.volume = PlayerPrefs.GetFloat(PlayerPrefKeys.MusicLobbyVolumeKey);
 			musicLobbySlider.value = PlayerPrefs.GetFloat(PlayerPrefKeys.MusicLobbyVolumeKey);
 		}
 
@@ -59,27 +53,25 @@ public class MusicLobbyManager : MonoBehaviour
 		}
 	}
 
-	public  String[] PlayRandomTrack()
+	/// <summary>
+	/// Sets all values for audio source
+	/// </summary>
+	/// <returns>Artist and track name</returns>
+	public String[] PlayRandomTrack()
 	{
 		StopMusic();
-		String[] songInfo;
 
 		currentLobbyAudioSource.clip = musicClips.GetRandomClip();
-		var volume = musicLobbySlider.value;
-		if (isMusicMute)
-		{
-			volume = 0f;
-		}
 
+		currentLobbyAudioSource.mute = isMusicMute;
 		currentLobbyAudioSource.outputAudioMixerGroup = MusicMixer;
-		currentLobbyAudioSource.volume = volume;
+		currentLobbyAudioSource.volume = musicLobbySlider.value;
 		currentLobbyAudioSource.Play();
-		songInfo = currentLobbyAudioSource.clip.name.Split('_');
 
-		return songInfo;
+		return currentLobbyAudioSource.clip.name.Split('_');
 	}
 
-	public  void ToggleMusicMute(bool mute)
+	public void ToggleMusicMute(bool mute)
 	{
 		isMusicMute = mute;
 
@@ -96,7 +88,7 @@ public class MusicLobbyManager : MonoBehaviour
 		}
 	}
 
-	public  void StopMusic()
+	public void StopMusic()
 	{
 		currentLobbyAudioSource.Stop();
 
@@ -115,7 +107,9 @@ public class MusicLobbyManager : MonoBehaviour
 		}
 	}
 
-
+	/// <summary>
+	/// Used in lobby slider event
+	/// </summary>
 	public void OnSliderChanged()
 	{
 		var sliderValue = musicLobbySlider.value;

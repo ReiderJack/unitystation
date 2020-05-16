@@ -29,6 +29,8 @@ public class SongTracker : MonoBehaviour
 
 	void Awake()
 	{
+		if (sliderMusic == null) sliderMusic = GetComponentInChildren<Slider>();
+		if (buttonRandomTrack == null) buttonRandomTrack = GetComponentInChildren<Button>();
 		ToggleUI(false);
 		if (!PlayerPrefs.HasKey(PlayerPrefKeys.MuteMusic))
 		{
