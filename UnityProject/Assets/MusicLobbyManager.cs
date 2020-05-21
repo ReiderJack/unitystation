@@ -77,7 +77,7 @@ public class MusicLobbyManager : MonoBehaviour
 
 		currentLobbyAudioSource.mute = mute;
 
-		if (mute)
+		/*if (mute)
 		{
 			Synth.Instance.SetMusicVolume(Byte.MinValue);
 		}
@@ -85,7 +85,7 @@ public class MusicLobbyManager : MonoBehaviour
 		{
 			var vol = 255 * musicLobbySlider.value;
 			Synth.Instance.SetMusicVolume((byte) (int) vol);
-		}
+		}*/
 	}
 
 	public void StopMusic()
