@@ -47,40 +47,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meals:
     recipeList:
-    - Name: Meat Steak
-      Ingredients:
-      - amount: 1
-        ingredientName: Meat
-      Output: {fileID: 6532193109441330816, guid: f5b3ac01c1928bf4ab03433000e00ca2,
-        type: 3}
-    - Name: Meat Cutlet
-      Ingredients:
-      - amount: 1
-        ingredientName: Meat Cutlet
-      Output: {fileID: 6532193109441330816, guid: dcb198c42e70def43a450ef925a6b4b5,
-        type: 3}
-    - Name: Meat Cutlet (Clone)
-      Ingredients:
-      - amount: 1
-        ingredientName: Meat Cutlet(Clone)
-      Output: {fileID: 6532193109441330816, guid: dcb198c42e70def43a450ef925a6b4b5,
-        type: 3}
+    - {fileID: 11400000, guid: 0fc2d8e33cfe642418ef1a7c35174c96, type: 2}
+    - {fileID: 11400000, guid: 5b36f1eaff26b924789d5a542ee771dc, type: 2}
+    - {fileID: 11400000, guid: 07c23ee5e58fe0c468474084e263a13d, type: 2}
+    - {fileID: 11400000, guid: b8d89ef69d0c2d3448b95795ba988cdb, type: 2}
+    - {fileID: 11400000, guid: 93c250f6d5732e0459bddc3b05fdc1ea, type: 2}
   cuts:
     recipeList:
-    - Name: Meat Cutlet
-      Ingredients:
-      - amount: 1
-        ingredientName: Meat
-      Output: {fileID: 6532193109441330816, guid: f06058cd7ca4b944aa68f64125386e28,
-        type: 3}
+    - {fileID: 11400000, guid: 8ab36ba2fa29fed4095495a42862a009, type: 2}
+    - {fileID: 11400000, guid: 8726998c243ff9e4ba34d48d194e43c5, type: 2}
+    - {fileID: 11400000, guid: a0c5531ef7899c54e90f381a0b3df078, type: 2}
+    - {fileID: 11400000, guid: b54f04176f9e57b43aeea336e8d13345, type: 2}
   logs:
     recipeList:
-    - Name: Wooden Plank
-      Ingredients:
-      - amount: 1
-        ingredientName: Tower-cap log
-      Output: {fileID: 6254655335276451647, guid: 7543d187ee101c148ab143a796d9d175,
-        type: 3}
+    - {fileID: 11400000, guid: c255ff285353ff047b52b12f8dbdab9c, type: 2}
+  roll:
+    recipeList: []
+  simplemeal:
+    recipeList:
+    - {fileID: 11400000, guid: 9bdb180b795ad9443ab9f208722283a6, type: 2}
+  grind:
+    grinderRecipeList:
+    - {fileID: 11400000, guid: f4127034a7647d349905b15cc11a0583, type: 2}
+  mix:
+    recipeList: []
   techweb: {fileID: 8028218387555133124}
   designs: {fileID: 8028062986537714290}
 --- !u!114 &8028218387555133124
