@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Atmospherics;
+using Health;
 using Light2D;
 using UnityEngine;
 using UnityEngine.Events;
@@ -601,6 +602,7 @@ public abstract class LivingHealthBehaviour : NetworkBehaviour, IHealth, IFireEx
 
 
 		if (bloodSystem.ToxinLevel > 1f)
+		if (bloodSystem.ToxinDamage > 1f)
 		{
 			//TODO determine a way to handle toxin damage when toxins are implemented
 			//There will need to be some kind of blood / toxin ratio and severity limits determined
