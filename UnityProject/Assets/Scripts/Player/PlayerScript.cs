@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System;
+using Health;
 using Audio.Managers;
 
 public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
@@ -23,10 +24,12 @@ public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 	public WeaponNetworkActions weaponNetworkActions { get; set; }
 
 	public Orientation CurrentDirection => playerDirectional.CurrentDirection;
+
 	/// <summary>
 	/// Will be null if player is a ghost.
 	/// </summary>
-	public PlayerHealth playerHealth { get; set; }
+	// public PlayerHealth playerHealth { get; set; }
+	public OrganicHealthSystem playerHealth { get; set; }
 
 	public PlayerMove playerMove { get; set; }
 	public PlayerSprites playerSprites { get; set; }
@@ -186,7 +189,7 @@ public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 		playerSprites = GetComponent<PlayerSprites>();
 		playerNetworkActions = GetComponent<PlayerNetworkActions>();
 		registerTile = GetComponent<RegisterPlayer>();
-		playerHealth = GetComponent<PlayerHealth>();
+		playerHealth = GetComponent<OrganicHealthSystem>();
 		pushPull = GetComponent<ObjectBehaviour>();
 		weaponNetworkActions = GetComponent<WeaponNetworkActions>();
 		mouseInputController = GetComponent<MouseInputController>();

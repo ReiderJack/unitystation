@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
@@ -442,7 +443,7 @@ public class PlayerMove : NetworkBehaviour, IRightClickable, IServerSpawn, IActi
 
 	private bool CanUnBuckleSelf()
 	{
-		PlayerHealth playerHealth = playerScript.playerHealth;
+		OrganicHealthSystem playerHealth = playerScript.playerHealth;
 
 		return !(playerHealth == null ||
 		         playerHealth.ConsciousState == ConsciousState.DEAD ||

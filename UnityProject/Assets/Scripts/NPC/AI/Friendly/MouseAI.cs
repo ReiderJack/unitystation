@@ -1,3 +1,4 @@
+using Health;
 using UnityEngine;
 
 namespace NPC
@@ -100,7 +101,7 @@ namespace NPC
 		private void Electrocute(float voltage)
 		{
 			var electrocution = new Electrocution(voltage, registerObject.WorldPosition);
-			var performerLHB = GetComponent<LivingHealthBehaviour>();
+			var performerLHB = GetComponent<HealthSystem>();
 			performerLHB.Electrocute(electrocution);
 		}
 

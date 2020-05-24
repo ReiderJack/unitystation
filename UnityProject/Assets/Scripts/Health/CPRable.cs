@@ -1,4 +1,5 @@
 using UnityEngine;
+using Health;
 
 /// <summary>
 /// Allows an object to be CPRed by a player.
@@ -7,8 +8,8 @@ public class CPRable : MonoBehaviour, IClientInteractable<PositionalHandApply>
 {
 	public bool Interact(PositionalHandApply interaction)
 	{
-		var targetPlayerHealth = interaction.TargetObject.GetComponent<PlayerHealth>();
-		var performerPlayerHealth = interaction.Performer.GetComponent<PlayerHealth>();
+		var targetPlayerHealth = interaction.TargetObject.GetComponent<OrganicHealthSystem>();
+		var performerPlayerHealth = interaction.Performer.GetComponent<OrganicHealthSystem>();
 		var performerRegisterPlayer = interaction.Performer.GetComponent<RegisterPlayer>();
 
 		// Is the target in range for CPR? Is the target unconscious? Is the intent set to help? Is the target a player?

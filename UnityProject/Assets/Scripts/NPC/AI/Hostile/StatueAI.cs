@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 namespace NPC
@@ -67,7 +68,7 @@ namespace NPC
 				var dir = (transform.position - coll.gameObject.transform.position).normalized;
 
 				if (coll.gameObject.layer == playersLayer
-				    && !coll.gameObject.GetComponent<LivingHealthBehaviour>().IsDead
+				    && !coll.gameObject.GetComponent<HealthSystem>().IsDead
 				    && coll.gameObject.GetComponent<Directional>()?.CurrentDirection == orientations[DirToInt(dir)])
 				{
 					Freeze();

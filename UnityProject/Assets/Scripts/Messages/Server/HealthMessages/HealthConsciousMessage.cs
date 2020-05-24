@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Health;
 using UnityEngine;
 using Mirror;
 
@@ -18,7 +19,7 @@ public class HealthConsciousMessage : ServerMessage
 			return;
 		}
 
-		var healthBehaviour = NetworkObject.GetComponent<LivingHealthBehaviour>();
+		var healthBehaviour = NetworkObject.GetComponent<HealthSystem>();
 
 		if (healthBehaviour != null)
 		{

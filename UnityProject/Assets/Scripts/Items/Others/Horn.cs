@@ -1,4 +1,5 @@
 using System.Collections;
+using Health;
 using UnityEngine;
 using Mirror;
 
@@ -31,7 +32,7 @@ public class Horn : MonoBehaviour, ICheckedInteractable<HandActivate>, ICheckedI
 		allowUse = true;
 	}
 
-	private IEnumerator CritHonk( PositionalHandApply clickData, LivingHealthBehaviour targetHealth )
+	private IEnumerator CritHonk( PositionalHandApply clickData, HealthSystem targetHealth )
 	{
 		yield return WaitFor.Seconds( 0.02f );
 		SoundManager.PlayNetworkedAtPos( Sound, gameObject.AssumedWorldPosServer(), -1f, true, true, 20, 5, sourceObj: GetHonkSoundObject());
@@ -54,7 +55,7 @@ public class Horn : MonoBehaviour, ICheckedInteractable<HandActivate>, ICheckedI
 	{
 		bool inCloseRange = Validations.IsInReach( interaction.TargetVector );
 		var targetObject = interaction.TargetObject;
-		var targetHealth = targetObject != null ? targetObject.GetComponent<LivingHealthBehaviour>() : null;
+		var targetHealth = targetObject != null ? targetObject.GetComponent<HealthSystem>() : null;
 		bool isCrit = Random.Range( 0f, 1f ) <= CritChance;
 
 		// honking in someone's face
@@ -103,7 +104,7 @@ public class Horn : MonoBehaviour, ICheckedInteractable<HandActivate>, ICheckedI
 	}
 
 	/// <summary>
-	/// Is called to find the object where the honk sound is played. 
+	/// Is called to find the object where the honk sound is played.
 	/// </summary>
 	/// <returns>The GameObject where the sound for the Honk should be played.
 	/// If the horn is in an inventory, the container in which it is located is returned. </returns>

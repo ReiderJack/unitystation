@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -183,7 +184,7 @@ public static class Validations
 		return true;
 	}
 
-	private static bool CanInteractByConsciousState(PlayerHealth playerHealth, bool allowSoftCrit, NetworkSide side)
+	private static bool CanInteractByConsciousState(OrganicHealthSystem playerHealth, bool allowSoftCrit, NetworkSide side)
 	{
 		if (side == NetworkSide.Client)
 		{

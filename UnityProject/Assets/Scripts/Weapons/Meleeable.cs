@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 //Do not derive from NetworkBehaviour, this is also used on tilemap layers
@@ -122,7 +123,7 @@ public class Meleeable : MonoBehaviour, IPredictedCheckedInteractable<Positional
 
 			//butcher check
 			GameObject victim = interaction.TargetObject;
-			var healthComponent = victim.GetComponent<LivingHealthBehaviour>();
+			var healthComponent = victim.GetComponent<HealthSystem>();
 
 			if (healthComponent
 			    && healthComponent.allowKnifeHarvest
@@ -139,8 +140,8 @@ public class Meleeable : MonoBehaviour, IPredictedCheckedInteractable<Positional
 				}
 				void ProgressFinishAction()
 				{
-					LivingHealthBehaviour victimHealth = victim.GetComponent<LivingHealthBehaviour>();
-					victimHealth.Harvest();
+					HealthSystem victimHealth = victim.GetComponent<HealthSystem>();
+					// victimHealth.Harvest();//TODO use the new component instead
 					SoundManager.PlayNetworkedAtPos(butcherSound, victim.RegisterTile().WorldPositionServer);
 				}
 

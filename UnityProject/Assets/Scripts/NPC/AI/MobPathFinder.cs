@@ -1,6 +1,7 @@
 ﻿using PathFinding;
 using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 public class MobPathFinder : MonoBehaviour
@@ -10,7 +11,7 @@ public class MobPathFinder : MonoBehaviour
 	protected CustomNetTransform cnt;
 
 	protected NPCDirectionalSprites dirSprites;
-	protected LivingHealthBehaviour health;
+	protected HealthSystem health;
 
 	protected bool isServer;
 
@@ -49,7 +50,7 @@ public class MobPathFinder : MonoBehaviour
 		registerTile = GetComponent<RegisterTile>();
 		cnt = GetComponent<CustomNetTransform>();
 		dirSprites = GetComponent<NPCDirectionalSprites>();
-		health = GetComponent<LivingHealthBehaviour>();
+		health = GetComponent<HealthSystem>();
 	}
 
 	public virtual void OnEnable()

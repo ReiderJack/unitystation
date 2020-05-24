@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using UnityEngine;
 using Mirror;
 using Antagonists;
+using Health;
 using Object = UnityEngine.Object;
 
 /// <summary>
@@ -97,6 +98,7 @@ public class Mind
 		Spells.Clear();
 		playerScript.mind = this;
 		body = playerScript;
+		bodyMobID = playerScript.GetComponent<HealthSystem>().mobID;
 		bodyMobID = playerScript.GetComponent<LivingHealthBehaviour>().mobID;
 		if (occupation != null)
 		{
@@ -172,7 +174,7 @@ public class Mind
 		var currentMob = GetCurrentMob();
 		if (!IsGhosting)
 		{
-			var livingHealthBehaviour = currentMob.GetComponent<LivingHealthBehaviour>();
+			var livingHealthBehaviour = currentMob.GetComponent<HealthSystem>();
 			if (!livingHealthBehaviour.IsDead)
 			{
 				return CloneableStatus.StillAlive;
