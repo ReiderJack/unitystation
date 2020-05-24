@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Health;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -333,7 +334,7 @@ namespace Chemistry.Components
 
 		private void NotifyPlayersOfSpill(Vector3Int worldPos)
 		{
-			var mobs = MatrixManager.GetAt<LivingHealthBehaviour>(worldPos, true);
+			var mobs = MatrixManager.GetAt<HealthSystem>(worldPos, true);
 			if (mobs.Count > 0)
 			{
 				foreach (var mob in mobs)

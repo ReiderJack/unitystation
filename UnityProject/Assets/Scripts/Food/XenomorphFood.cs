@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Threading.Tasks;
+using Health;
 
 [RequireComponent(typeof(RegisterItem))]
 [RequireComponent(typeof(ItemAttributesV2))]
@@ -10,7 +11,7 @@ public class XenomorphFood : Edible
 	[SerializeField]
 	private int killTime = 400;
 	[SerializeField]
-	private GameObject larvae = null; 
+	private GameObject larvae = null;
 	private string Name => itemAttributes.ArticleName;
 	private static readonly StandardProgressActionConfig ProgressConfig
 		= new StandardProgressActionConfig(StandardProgressActionType.Restrain);
@@ -56,7 +57,7 @@ public class XenomorphFood : Edible
 		var feederSlot = feeder.ItemStorage.GetActiveHandSlot();
 		Inventory.ServerDespawn(feederSlot);
 	}
-	private async Task Pregnancy(PlayerHealth player)
+	private async Task Pregnancy(OrganicHealthSystem player)
 	{
 		await Task.Delay(TimeSpan.FromSeconds(killTime - (killTime / 8)));
 		Chat.AddActionMsgToChat(player.gameObject, "Your stomach gurgles uncomfortably...",

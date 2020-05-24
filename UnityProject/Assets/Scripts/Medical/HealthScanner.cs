@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -13,26 +14,26 @@ public class HealthScanner : MonoBehaviour, ICheckedInteractable<HandApply>
 	{
 		if (!DefaultWillInteract.Default(interaction, side)) return false;
 		//can only be applied to LHB
-		if (!Validations.HasComponent<LivingHealthBehaviour>(interaction.TargetObject)) return false;
+		if (!Validations.HasComponent<HealthSystem>(interaction.TargetObject)) return false;
 		return true;
 	}
 
 	public void ServerPerformInteraction(HandApply interaction)
 	{
-		var livingHealth = interaction.TargetObject.GetComponent<LivingHealthBehaviour>();
+		var livingHealth = interaction.TargetObject.GetComponent<HealthSystem>();
 		string ToShow = (livingHealth.name + " is " + livingHealth.ConsciousState.ToString() + "\n"
 		                 + "OverallHealth = " + livingHealth.OverallHealth.ToString() + " Blood level = " + livingHealth.bloodSystem.BloodLevel.ToString() + "\n"
 		                 + "Blood levels = " + livingHealth.CalculateOverallBloodLossDamage() + "\n");
 		string StringBuffer = "";
 		float TotalBruteDamage = 0;
 		float TotalBurnDamage = 0;
-		foreach (BodyPartBehaviour BodyPart in livingHealth.BodyParts)
+		foreach (BodyPart bodyPart in livingHealth.bodyParts)
 		{
-			StringBuffer += BodyPart.Type.ToString() + "\t";
-			StringBuffer += BodyPart.BruteDamage.ToString() + "\t";
-			TotalBruteDamage += BodyPart.BruteDamage;
-			StringBuffer += BodyPart.BurnDamage.ToString();
-			TotalBurnDamage += BodyPart.BurnDamage;
+			StringBuffer += bodyPart.bodyPartData.bodyPartType.ToString() + "\t";
+			StringBuffer += bodyPart.BruteDamage.ToString() + "\t";
+			TotalBruteDamage += bodyPart.BruteDamage;
+			StringBuffer += bodyPart.BurnDamage.ToString();
+			TotalBurnDamage += bodyPart.BurnDamage;
 			StringBuffer += "\n";
 		}
 		ToShow = ToShow + "Overall, Brute " + TotalBruteDamage.ToString() + " Burn " + TotalBurnDamage.ToString() + " OxyLoss " + livingHealth.bloodSystem.OxygenDamage.ToString() + "\n" + "Body Part, Brute, Burn \n" + StringBuffer;

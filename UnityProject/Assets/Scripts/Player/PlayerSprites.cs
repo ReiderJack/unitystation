@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Health;
 using Light2D;
 using Mirror;
 using UnityEngine;
@@ -38,7 +39,8 @@ public class PlayerSprites : MonoBehaviour
 	private PlayerDirectionalOverlay engulfedBurningOverlay;
 	private PlayerDirectionalOverlay partialBurningOverlay;
 	private PlayerDirectionalOverlay electrocutedOverlay;
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem livingHealthBehaviour;
+	// private HealthSystem livingHealthBehaviour;
 	private PlayerScript playerScript;
 	private PlayerHealth playerHealth;
 	private PlayerSync playerSync;
@@ -55,7 +57,7 @@ public class PlayerSprites : MonoBehaviour
 	protected void Awake()
 	{
 		directional = GetComponent<Directional>();
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		livingHealthBehaviour = GetComponent<HealthSystem>();
 
 		foreach (ClothingItem c in GetComponentsInChildren<ClothingItem>())
 		{

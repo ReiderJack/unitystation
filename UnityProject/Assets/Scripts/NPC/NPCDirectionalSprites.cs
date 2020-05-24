@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 using Mirror;
 
 //TODO: The actual sprite handling needs to be offloaded to SpriteHandler at some point
@@ -9,7 +10,7 @@ using Mirror;
 /// </summary>
 public class NPCDirectionalSprites : NetworkBehaviour
 {
-	private LivingHealthBehaviour health;
+	private HealthSystem health;
 	private UprightSprites uprightSprites;
 	public SpriteRenderer spriteRend;
 	public Sprite upSprite;
@@ -38,7 +39,7 @@ public class NPCDirectionalSprites : NetworkBehaviour
 	private void EnsureInit()
 	{
 		if (health != null) return;
-		health = GetComponent<LivingHealthBehaviour>();
+		health = GetComponent<HealthSystem>();
 		uprightSprites = GetComponent<UprightSprites>();
 	}
 

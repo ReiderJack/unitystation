@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(MobFollow))]
@@ -14,7 +15,7 @@ public class MobAI : MonoBehaviour, IServerDespawn
 	protected MobFollow mobFollow;
 	protected MobExplore mobExplore;
 	protected MobFlee mobFlee;
-	protected LivingHealthBehaviour health;
+	protected HealthSystem health;
 	protected NPCDirectionalSprites dirSprites;
 	protected CustomNetTransform cnt;
 	protected RegisterObject registerObject;
@@ -57,7 +58,7 @@ public class MobAI : MonoBehaviour, IServerDespawn
 		mobFollow = GetComponent<MobFollow>();
 		mobExplore = GetComponent<MobExplore>();
 		mobFlee = GetComponent<MobFlee>();
-		health = GetComponent<LivingHealthBehaviour>();
+		health = GetComponent<HealthSystem>();
 		dirSprites = GetComponent<NPCDirectionalSprites>();
 		cnt = GetComponent<CustomNetTransform>();
 		registerObject = GetComponent<RegisterObject>();
@@ -72,7 +73,7 @@ public class MobAI : MonoBehaviour, IServerDespawn
 		if (CustomNetworkManager.Instance._isServer)
 		{
 			UpdateManager.Add(CallbackType.UPDATE, UpdateMe);
-			health.applyDamageEvent += OnAttackReceived;
+			health.ApplyDamageEvent += OnAttackReceived;
 			isServer = true;
 			AIStartServer();
 		}
@@ -83,7 +84,7 @@ public class MobAI : MonoBehaviour, IServerDespawn
 		if (isServer)
 		{
 			UpdateManager.Remove(CallbackType.UPDATE, UpdateMe);
-			health.applyDamageEvent += OnAttackReceived;
+			health.ApplyDamageEvent += OnAttackReceived;
 		}
 	}
 
@@ -428,9 +429,9 @@ public class MobAI : MonoBehaviour, IServerDespawn
 	/// Virtual method to override on extensions of this class. Called when paired with MobMeleeAction
 	/// </summary>
 	/// <param name="dir"></param>
-	/// <param name="healthBehaviour"></param>
+	/// <param name="healthSystem"></param>
 	/// <param name="doLerpAnimation"></param>
-	public virtual void ActOnLiving(Vector3 dir, LivingHealthBehaviour healthBehaviour) {}
+	public virtual void ActOnLiving(Vector3 dir, HealthSystem healthSystem) {}
 
 	/// <summary>
 	/// Virtual method to override on extensions of this class. Called when paired with MobMeleeAction

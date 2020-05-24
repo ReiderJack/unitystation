@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Threading.Tasks;
+using Health;
 using Mirror;
 using UnityEngine;
 
@@ -82,14 +83,14 @@ namespace Clothing
 			StartCoroutine(Release());
 		}
 
-		private IEnumerator Coitus(PlayerHealth player)
+		private IEnumerator Coitus(OrganicHealthSystem player)
 		{
 			yield return WaitFor.Seconds(coitusTime);
 			Pregnancy(player);
 			yield return WaitFor.EndOfFrame;
 		}
 
-		private async Task Pregnancy(PlayerHealth player)
+		private async Task Pregnancy(OrganicHealthSystem player)
 		{
 			KillHugger();
 			await Task.Delay(TimeSpan.FromSeconds(pregnancyTime));

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 public class SuicideMessage : ClientMessage
@@ -7,7 +8,7 @@ public class SuicideMessage : ClientMessage
 	public override void Process()
 	{
 
-		if (SentByPlayer.Script.TryGetComponent<LivingHealthBehaviour>(out var livingHealthBehaviour))
+		if (SentByPlayer.Script.TryGetComponent<HealthSystem>(out var livingHealthBehaviour))
 		{
 			if (livingHealthBehaviour.IsDead)
 			{

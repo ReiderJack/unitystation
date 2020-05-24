@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Linq;
+using Health;
 using UnityEngine;
 using Mirror;
 
 public class DNAscanner : ClosetControl, ICheckedInteractable<MouseDrop>, IAPCPowered
 {
-	public LivingHealthBehaviour occupant;
+	public HealthSystem occupant;
 	public string statusString;
 
 	public bool Powered => powered;
@@ -44,7 +45,7 @@ public class DNAscanner : ClosetControl, ICheckedInteractable<MouseDrop>, IAPCPo
 		if(ServerHeldPlayers.Any())
 		{
 			var mob = ServerHeldPlayers.First();
-			occupant = mob.GetComponent<LivingHealthBehaviour>();
+			occupant = mob.GetComponent<HealthSystem>();
 		}
 		else
 		{

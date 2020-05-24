@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
+using Health;
 
 /// <summary>
 ///     Controller for the heart monitor GUI
@@ -28,7 +27,7 @@ public class UI_HeartMonitor : TooltipMonoBehaviour
 
 	[SerializeField]
 	public List<Spritelist> StatesSprites;
-	private int CurrentSpriteSet = 0; 
+	private int CurrentSpriteSet = 0;
 	private float timeWait;
 	private float overallHealthCache = 100;
 
@@ -60,7 +59,7 @@ public class UI_HeartMonitor : TooltipMonoBehaviour
 			timeWait += Time.deltaTime;
 			if (timeWait > 0.05f)
 			{
-				if (currentSprite != 27) 
+				if (currentSprite != 27)
 				{
 					pulseImg.sprite = StatesSprites[CurrentSpriteSet].SP[currentSprite];
 					currentSprite++;

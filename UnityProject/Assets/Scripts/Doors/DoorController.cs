@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using Health;
 
 public class DoorController : NetworkBehaviour, IServerSpawn
 {
@@ -409,7 +410,7 @@ public class DoorController : NetworkBehaviour, IServerSpawn
 
 	private void ServerDamageOnClose()
 	{
-		foreach ( LivingHealthBehaviour healthBehaviour in matrix.Get<LivingHealthBehaviour>(registerTile.LocalPositionServer, true) )
+		foreach ( HealthSystem healthBehaviour in matrix.Get<HealthSystem>(registerTile.LocalPositionServer, true) )
 		{
 			healthBehaviour.ApplyDamage(gameObject, damageClosed, AttackType.Melee, DamageType.Brute);
 		}
@@ -528,7 +529,7 @@ public class DoorController : NetworkBehaviour, IServerSpawn
 			{
 				hackingProcess.HackingGUI.RemovePlayer(ply.gameObject);
 				TabUpdateMessage.Send(ply.gameObject, hackingProcess.HackingGUI.Provider, NetTabType.HackingPanel, TabAction.Close);
-				var playerLHB = obj.GetComponent<LivingHealthBehaviour>();
+				var playerLHB = obj.GetComponent<HealthSystem>();
 				var electrocution = new Electrocution(9080, registerTile.WorldPositionServer, "wire");
 				if (playerLHB != null) playerLHB.Electrocute(electrocution);
 			}

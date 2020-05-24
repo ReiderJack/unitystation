@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -121,7 +122,7 @@ public class Cremator : Drawer, IRightClickable, ICheckedInteractable<MouseDrop>
 		SoundManager.PlayNetworkedAtPos("Ding", DrawerWorldPosition, sourceObj: gameObject);
 		DestroyItems();
 
-		if (serverHeldItems.Count > 0 || serverHeldPlayers.Count > 0) containsAsh = true;		
+		if (serverHeldItems.Count > 0 || serverHeldPlayers.Count > 0) containsAsh = true;
 	}
 
 	private void DestroyItems()
@@ -140,7 +141,7 @@ public class Cremator : Drawer, IRightClickable, ICheckedInteractable<MouseDrop>
 
 		foreach (ObjectBehaviour player in serverHeldPlayers)
 		{
-			LivingHealthBehaviour playerLHB = player.GetComponent<LivingHealthBehaviour>();
+			HealthSystem playerLHB = player.GetComponent<HealthSystem>();
 			if (playerLHB.ConsciousState == ConsciousState.CONSCIOUS ||
 				playerLHB.ConsciousState == ConsciousState.BARELY_CONSCIOUS)
 			{

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Health;
 using Mirror;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -74,7 +75,7 @@ public class MobMeleeAttack : MobFollow
 				return false;
 			}
 
-			var followLivingBehaviour = followTarget.GetComponent<LivingHealthBehaviour>();
+			var followLivingBehaviour = followTarget.GetComponent<HealthSystem>();
 			var distanceToTarget = Vector3.Distance(followTarget.transform.position, transform.position);
 			if (followLivingBehaviour != null)
 			{
@@ -100,7 +101,7 @@ public class MobMeleeAttack : MobFollow
 					//Only hit target
 					if (onlyHitTarget)
 					{
-						var healthBehaviour = hitInfo.transform.GetComponent<LivingHealthBehaviour>();
+						var healthBehaviour = hitInfo.transform.GetComponent<HealthSystem>();
 						if (hitInfo.transform != followTarget || healthBehaviour.IsDead)
 						{
 							return false;
@@ -115,7 +116,7 @@ public class MobMeleeAttack : MobFollow
 					//What to do with player hit?
 					if (hitInfo.transform.gameObject.layer == playersLayer)
 					{
-						var healthBehaviour = hitInfo.transform.GetComponent<LivingHealthBehaviour>();
+						var healthBehaviour = hitInfo.transform.GetComponent<HealthSystem>();
 						if (healthBehaviour.IsDead)
 						{
 							return false;
@@ -149,7 +150,7 @@ public class MobMeleeAttack : MobFollow
 							}
 						}
 
-						var healthBehaviour = hitInfo.transform.GetComponent<LivingHealthBehaviour>();
+						var healthBehaviour = hitInfo.transform.GetComponent<HealthSystem>();
 						if (healthBehaviour != null)
 						{
 							if (healthBehaviour.IsDead) return false;
@@ -175,13 +176,13 @@ public class MobMeleeAttack : MobFollow
 		return false;
 	}
 
-	private void AttackFlesh(Vector2 dir, LivingHealthBehaviour healthBehaviour)
+	private void AttackFlesh(Vector2 dir, HealthSystem healthBehaviour)
 	{
 		StartCoroutine(AttackFleshRoutine(dir, healthBehaviour));
 	}
 
 	//We need to slow the attack down because clients are behind server
-	IEnumerator AttackFleshRoutine(Vector2 dir, LivingHealthBehaviour healthBehaviour)
+	IEnumerator AttackFleshRoutine(Vector2 dir, HealthSystem healthBehaviour)
 	{
 		if (healthBehaviour.connectionToClient == null)
 		{

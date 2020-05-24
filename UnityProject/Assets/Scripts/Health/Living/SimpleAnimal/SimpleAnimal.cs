@@ -1,73 +1,83 @@
 ﻿using System.Collections;
-using UnityEngine;
 using Mirror;
+using UnityEngine;
 
-public class SimpleAnimal : LivingHealthBehaviour
+namespace Health
 {
-	public Sprite aliveSprite;
-
-	public Sprite deadSprite;
-
-	//Syncvar hook so that new players can sync state on start
-	[SyncVar(hook = nameof(SyncAliveState))] public bool deadState;
-
-	public SpriteRenderer spriteRend;
-
-	public RegisterObject registerObject;
-
-	[Server]
-	public void SetDeadState(bool isDead)
+	public class SimpleAnimal : HealthSystem
 	{
-		deadState = isDead;
-	}
+		public Sprite aliveSprite;
 
-	public override void Awake()
-	{
-		registerObject = GetComponent<RegisterObject>();
-	}
+		public Sprite deadSprite;
 
-	public override void OnStartClient()
-	{
-		base.OnStartClient();
-		SyncAliveState(deadState, deadState);
-	}
+		//Syncvar hook so that new players can sync state on start
+		[SyncVar(hook = nameof(SyncAliveState))] public bool deadState;
 
-	[Server]
-	protected override void OnDeathActions()
-	{
-		deadState = true;
-	}
+		public SpriteRenderer spriteRend;
 
-	private void SyncAliveState(bool oldState, bool state)
-	{
-		deadState = state;
+		public RegisterObject registerObject;
 
-		if (state)
+		[Server]
+		public void SetDeadState(bool isDead)
 		{
-			spriteRend.sprite = deadSprite;
-			SetToBodyLayer();
-			registerObject.Passable = state;
+			deadState = isDead;
 		}
-		else
+
+		public override void Awake()
 		{
-			spriteRend.sprite = aliveSprite;
-			SetToNPCLayer();
+			registerObject = GetComponent<RegisterObject>();
 		}
-	}
 
-	/// <summary>
-	/// Set the sprite renderer to bodies when the mob has died
-	/// </summary>
-	public void SetToBodyLayer()
-	{
-		spriteRend.sortingLayerName = "Bodies";
-	}
+		public override void OnStartClient()
+		{
+			base.OnStartClient();
+			StartCoroutine(WaitForLoad());
+		}
 
-	/// <summary>
-	/// Set the mobs sprite renderer to NPC layer
-	/// </summary>
-	public void SetToNPCLayer()
-	{
-		spriteRend.sortingLayerName = "NPCs";
+		private IEnumerator WaitForLoad()
+		{
+			yield return WaitFor.Seconds(2f);
+			SyncAliveState(deadState, deadState);
+		}
+
+		[Server]
+		protected override void OnDeath()
+		{
+			base.OnDeath();
+			deadState = true;
+		}
+
+		private void SyncAliveState(bool oldState, bool state)
+		{
+			deadState = state;
+
+			if (state)
+			{
+				spriteRend.sprite = deadSprite;
+				SetToBodyLayer();
+				registerObject.Passable = state;
+			}
+			else
+			{
+				spriteRend.sprite = aliveSprite;
+				SetToNPCLayer();
+			}
+		}
+
+		/// <summary>
+		/// Set the sprite renderer to bodies when the mob has died
+		/// </summary>
+		public void SetToBodyLayer()
+		{
+			spriteRend.sortingLayerName = "Bodies";
+		}
+
+		/// <summary>
+		/// Set the mobs sprite renderer to NPC layer
+		/// </summary>
+		public void SetToNPCLayer()
+		{
+			spriteRend.sortingLayerName = "NPCs";
+		}
 	}
 }

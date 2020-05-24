@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -346,7 +347,7 @@ public partial class MatrixManager
 		//Damage methods
 		void ApplyDamage( MatrixInfo victimMatrix, Vector3Int cellPos, float hitEnergy, Vector3Int worldPos )
 		{
-			//LivingHealthBehaviour
+			//HealthSystem
 			hitEnergy -= ApplyLivingDamage( victimMatrix, cellPos, hitEnergy );
 
 			//TilemapDamage
@@ -358,7 +359,7 @@ public partial class MatrixManager
 
 		void ApplyCritDamage( MatrixInfo victimMatrix, Vector3Int cellPos, Vector3Int worldPos )
 		{
-			//LivingHealthBehaviour
+			//HealthSystem
 			ApplyLivingDamage( victimMatrix, cellPos, 9001 );
 
 			//TilemapDamage
@@ -425,7 +426,7 @@ public partial class MatrixManager
 		float ApplyLivingDamage( MatrixInfo matrix, Vector3Int cellPos, float damage )
 		{
 			byte count = 0;
-			foreach ( var healthBehaviour in matrix.Matrix.Get<LivingHealthBehaviour>( cellPos, true ) )
+			foreach ( var healthBehaviour in matrix.Matrix.Get<HealthSystem>( cellPos, true ) )
 			{
 				healthBehaviour.ApplyDamageToBodypart( matrix.GameObject, damage, AttackType.Melee, DamageType.Brute );
 				count++;

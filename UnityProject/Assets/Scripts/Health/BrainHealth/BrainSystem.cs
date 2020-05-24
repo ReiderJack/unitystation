@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -13,7 +14,9 @@ public class BrainSystem : MonoBehaviour //Do not turn into NetBehaviour
 	private Brain brain;
 	private BloodSystem bloodSystem;
 	private RespiratorySystem respiratorySystem;
-	private LivingHealthBehaviour livingHealthBehaviour;
+
+	private HealthSystem livingHealthBehaviour;
+	// private HealthSystem livingHealthBehaviour;
 	private PlayerScript playerScript; //null if it is an animal
 	/// <summary>
 	/// Is this body just a husk (missing brain)
@@ -43,7 +46,7 @@ public class BrainSystem : MonoBehaviour //Do not turn into NetBehaviour
 		playerScript = GetComponent<PlayerScript>();
 		bloodSystem = GetComponent<BloodSystem>();
 		respiratorySystem = GetComponent<RespiratorySystem>();
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		livingHealthBehaviour = GetComponent<HealthSystem>();
 
 		//Server only
 		if (CustomNetworkManager.Instance._isServer)

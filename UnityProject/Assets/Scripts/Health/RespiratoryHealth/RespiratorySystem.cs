@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Atmospherics;
+using Health;
 using Objects;
 using UnityEngine;
 
@@ -23,7 +24,8 @@ public class RespiratorySystem : MonoBehaviour //Do not turn into NetBehaviour
 	public float suffocationTime = 0f;
 
 	private BloodSystem bloodSystem;
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem livingHealthBehaviour;
+	// private HealthSystem livingHealthBehaviour;
 	private Equipment equipment;
 	private ObjectBehaviour objectBehaviour;
 
@@ -38,7 +40,7 @@ public class RespiratorySystem : MonoBehaviour //Do not turn into NetBehaviour
 	void Awake()
 	{
 		bloodSystem = GetComponent<BloodSystem>();
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		livingHealthBehaviour = GetComponent<HealthSystem>();
 		playerScript = GetComponent<PlayerScript>();
 		registerTile = GetComponent<RegisterTile>();
 		equipment = GetComponent<Equipment>();

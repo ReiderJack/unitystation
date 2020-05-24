@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Health;
 using UnityEngine;
 using Utility = UnityEngine.Networking.Utility;
 using Mirror;
@@ -144,7 +145,7 @@ public class WeaponNetworkActions : ManagedNetworkBehaviour
 		{
 			//a regular object being attacked
 
-			LivingHealthBehaviour victimHealth = victim.GetComponent<LivingHealthBehaviour>();
+			HealthSystem victimHealth = victim.GetComponent<HealthSystem>();
 
 			var integrity = victim.GetComponent<Integrity>();
 			if (integrity != null)

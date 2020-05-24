@@ -1,3 +1,4 @@
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -51,7 +52,7 @@ public class ElectrifiedGrilleInteraction : TileInteraction
 
 	bool Electrocute(float voltage)
 	{
-		var performerLHB = interaction.Performer.GetComponent<LivingHealthBehaviour>();
+		var performerLHB = interaction.Performer.GetComponent<HealthSystem>();
 		var electrocutionExposure = new Electrocution(voltage, interaction.WorldPositionTarget, interaction.BasicTile.DisplayName);
 		var severity = performerLHB.Electrocute(electrocutionExposure);
 
