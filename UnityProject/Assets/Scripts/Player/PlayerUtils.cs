@@ -28,7 +28,7 @@ public static class PlayerUtils
 	{
 		return "April fools!";
 	}
-	
+
 	public static void DoReport()
 	{
 		if (!CustomNetworkManager.IsServer)
@@ -43,14 +43,14 @@ public static class PlayerUtils
 			{
 				continue;
 			}
-			
+
 			if (ps.mind != null &&
 			    ps.mind.occupation != null &&
 			    ps.mind.occupation.JobType == JobType.CLOWN)
 			{
 				//love clown
 				ps.playerMove.Uncuff();
-				foreach (var bodyPart in ps.playerHealth.BodyParts)
+				foreach (var bodyPart in ps.playerHealth.bodyParts)
 				{
 					bodyPart.HealDamage(200, DamageType.Brute);
 					bodyPart.HealDamage(200, DamageType.Burn);
@@ -68,7 +68,7 @@ public static class PlayerUtils
 				{
 					var plantPos = ps.WorldPos + ps.CurrentDirection.Vector;
 					Spawn.ServerPrefab("Banana peel", plantPos, cancelIfImpassable: true);
-					
+
 				}
 				foreach (var pos in ps.WorldPos.BoundsAround().allPositionsWithin)
 				{

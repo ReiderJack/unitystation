@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -20,7 +21,7 @@ public class MobAnimator : MonoBehaviour
 
 	private SimpleAnimal simpleAnimal;
 
-	private LivingHealthBehaviour livingHealthBehaviour;
+	private HealthSystem livingHealthBehaviour;
 
 	private Tuple<Sprite[], bool, bool, bool, float, List<int>> NewSprites;
 
@@ -68,7 +69,7 @@ public class MobAnimator : MonoBehaviour
 
 		npcDirectionalSprite = GetComponent<NPCDirectionalSprites>();
 
-		livingHealthBehaviour = GetComponent<LivingHealthBehaviour>();
+		livingHealthBehaviour = GetComponent<HealthSystem>();
 
 		simpleAnimal = GetComponent<SimpleAnimal>();
 

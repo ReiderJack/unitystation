@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using Health;
 using UnityEngine.UI;
 
 public class PlayerHealthUI : MonoBehaviour
@@ -183,6 +183,51 @@ public class PlayerHealthUI : MonoBehaviour
 				case DamageSeverity.Max:
 				default:
 					sprite = bodyPart.GrayDamageMonitorIcon;
+					break;
+			}
+			if (sprite != null && bodyPartListeners[i] != null && bodyPartListeners[i].image != null)
+			{
+				bodyPartListeners[i].image.sprite = sprite;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Update the PlayerHealth body part hud icon
+	/// </summary>
+	/// <param name="bodyPart"> Body part that requires updating </param>
+	public void SetBodyTypeOverlay(BodyPart bodyPart)
+	{
+		for (int i = 0; i < bodyPartListeners.Count; i++)
+		{
+			if (bodyPartListeners[i].bodyPartType != bodyPart.bodyPartData.bodyPartType)
+			{
+				continue;
+			}
+			Sprite sprite;
+			switch (bodyPart.DamageSeverity)
+			{
+				case DamageSeverity.None:
+					sprite = bodyPart.bodyPartData.blueDamageMonitorIcon;
+					break;
+				case DamageSeverity.Light:
+					sprite = bodyPart.bodyPartData.greenDamageMonitorIcon;
+					break;
+				case DamageSeverity.LightModerate:
+					sprite = bodyPart.bodyPartData.yellowDamageMonitorIcon;
+					break;
+				case DamageSeverity.Moderate:
+					sprite = bodyPart.bodyPartData.orangeDamageMonitorIcon;
+					break;
+				case DamageSeverity.Bad:
+					sprite = bodyPart.bodyPartData.darkOrangeDamageMonitorIcon;
+					break;
+				case DamageSeverity.Critical:
+					sprite = bodyPart.bodyPartData.redDamageMonitorIcon;
+					break;
+				case DamageSeverity.Max:
+				default:
+					sprite = bodyPart.bodyPartData.grayDamageMonitorIcon;
 					break;
 			}
 			if (sprite != null && bodyPartListeners[i] != null && bodyPartListeners[i].image != null)

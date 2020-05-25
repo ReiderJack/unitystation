@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -100,7 +101,7 @@ public class RestraintOverlay : ClothingItem, IActionGUI
 
 	private bool CanUncuff()
 	{
-		PlayerHealth playerHealth = thisPlayerScript.playerHealth;
+		OrganicHealthSystem playerHealth = thisPlayerScript.playerHealth;
 
 		if (playerHealth == null ||
 			playerHealth.ConsciousState == ConsciousState.DEAD ||

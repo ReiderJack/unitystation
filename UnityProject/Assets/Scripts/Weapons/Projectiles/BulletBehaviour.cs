@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Health;
+
 /// <summary>
 /// Main behavior for a bullet, handles shooting and managing the trail rendering. Collision events are fired on
 /// the child gameobject's BulletColliderBehavior and passed up to this component.
@@ -79,7 +81,7 @@ public class BulletBehaviour : MonoBehaviour
 		{
 			StartCoroutine(countTiles());
 		}
-		
+
 	}
 
 	public IEnumerator countTiles()
@@ -149,7 +151,7 @@ public class BulletBehaviour : MonoBehaviour
 		}
 
 		//body or object?
-		var livingHealth = coll.GetComponent<LivingHealthBehaviour>();
+		var livingHealth = coll.GetComponent<HealthSystem>();
 		var integrity = coll.GetComponent<Integrity>();
 		if (integrity != null)
 		{

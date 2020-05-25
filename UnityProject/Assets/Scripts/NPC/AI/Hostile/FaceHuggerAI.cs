@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Clothing;
+using Health;
 using NPC.AI;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -295,7 +296,7 @@ namespace NPC
 			}
 		}
 
-		private void TryFacehug(Vector3 dir, LivingHealthBehaviour player)
+		private void TryFacehug(Vector3 dir, HealthSystem player)
 		{
 			var playerInventory = player.gameObject.GetComponent<PlayerScript>()?.Equipment;
 
@@ -391,9 +392,9 @@ namespace NPC
 			return antiHugger;
 		}
 
-		public override void ActOnLiving(Vector3 dir, LivingHealthBehaviour healthBehaviour)
+		public override void ActOnLiving(Vector3 dir, HealthSystem healthSystem)
 		{
-			TryFacehug(dir, healthBehaviour);
+			TryFacehug(dir, healthSystem);
 		}
 
 		public bool WillInteract(HandApply interaction, NetworkSide side)

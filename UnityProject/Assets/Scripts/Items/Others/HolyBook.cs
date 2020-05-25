@@ -1,7 +1,8 @@
 ﻿﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+ using Health;
+ using UnityEngine;
 using Mirror;
 using Random = System.Random;
 /// <summary>
@@ -40,10 +41,10 @@ public class HolyBook: MonoBehaviour, IPredictedCheckedInteractable<PositionalHa
 	public void ServerPerformInteraction(PositionalHandApply interaction)
 	{
 		//can only be applied to LHB
-		if (!Validations.HasComponent<LivingHealthBehaviour>(interaction.TargetObject)) return;
+		if (!Validations.HasComponent<HealthSystem>(interaction.TargetObject)) return;
 
 		//The book can't save people who are dead.
-		var LHB = interaction.TargetObject.GetComponent<LivingHealthBehaviour>();
+		var LHB = interaction.TargetObject.GetComponent<HealthSystem>();
 
 		if (LHB.IsDead)
 		{
@@ -111,7 +112,7 @@ public class HolyBook: MonoBehaviour, IPredictedCheckedInteractable<PositionalHa
 			if (!(LHB.OverallHealth >= LHB.maxHealth))
 			{
 				//Break foreach loop once a single heal is applied.
-				foreach (BodyPartBehaviour bodyPart in LHB.BodyParts)
+				foreach (BodyPart bodyPart in LHB.bodyParts)
 				{
 					//Heal brute first, then burns.
 					if (bodyPart.BruteDamage != 0)

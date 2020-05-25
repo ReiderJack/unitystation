@@ -676,7 +676,7 @@ public partial class PlayerSync
 		}
 	}
 
-		#endregion
+	#endregion
 
 	/// Lerping and ensuring server authority for space walk
 	[Server]

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 using MLAgents;
 
 /// <summary>
@@ -12,7 +13,7 @@ public class MobAgent : Agent
 	protected CustomNetTransform cnt;
 	protected RegisterObject registerObj;
 	protected NPCDirectionalSprites dirSprites;
-	protected LivingHealthBehaviour health; // For living beings
+	protected HealthSystem health; // For living beings
 	protected Integrity integrity; // For bots
 
 	private Vector3 startPos;
@@ -34,7 +35,7 @@ public class MobAgent : Agent
 		cnt = GetComponent<CustomNetTransform>();
 		registerObj = GetComponent<RegisterObject>();
 		dirSprites = GetComponent<NPCDirectionalSprites>();
-		health = GetComponent<LivingHealthBehaviour>();
+		health = GetComponent<HealthSystem>();
 		integrity = GetComponent<Integrity>();
 		agentParameters.onDemandDecision = true;
 	}

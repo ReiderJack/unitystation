@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Health;
+using UnityEngine;
 
 /// <summary>
 /// Allows an object to be pet by a player. Shameless copy of Huggable.cs
@@ -7,9 +8,9 @@ public class Pettable : MonoBehaviour, ICheckedInteractable<HandApply>
 {
 	public bool WillInteract( HandApply interaction, NetworkSide side )
 	{
-		var NPCHealth = interaction.TargetObject.GetComponent<LivingHealthBehaviour>();
+		var NPCHealth = interaction.TargetObject.GetComponent<HealthSystem>();
 		if (!DefaultWillInteract.Default(interaction, side) || NPCHealth.IsDead || interaction.Intent != Intent.Help) return false;
- 
+
 		return true;
 	}
 
@@ -17,7 +18,7 @@ public class Pettable : MonoBehaviour, ICheckedInteractable<HandApply>
 	{
 		string npcName;
 		var npc = interaction.TargetObject.GetComponent<MobAI>();
-		
+
 		if (npc == null)
 		{
 			npcName = interaction.TargetObject.name;
@@ -25,14 +26,14 @@ public class Pettable : MonoBehaviour, ICheckedInteractable<HandApply>
 		else
 		{
 			npcName = npc.mobName;
-		} 
+		}
 
 		Chat.AddActionMsgToChat(
 			interaction.Performer,
 			$"You pet {npcName}.",
 			$"{interaction.Performer.ExpensiveName()} pets {npcName}.");
-		
-		if(npc != null) 
+
+		if(npc != null)
 		{
 			gameObject.GetComponent<MobAI>().OnPetted(interaction.Performer.gameObject);
 		}

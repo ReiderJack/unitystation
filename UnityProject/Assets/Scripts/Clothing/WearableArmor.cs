@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Health;
 using UnityEngine;
 
 /// <summary>
@@ -18,7 +19,7 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 	[Tooltip("What body parts does this item protect")]
 	private BodyPartsCovered bodyPartsCovered = BodyPartsCovered.None;
 
-	private PlayerHealth player;
+	private OrganicHealthSystem player;
 	private Armor armor;
 
 	public void Awake()
@@ -60,16 +61,16 @@ public class WearableArmor : MonoBehaviour, IServerInventoryMove
 			}
 
 			var bodyPart = bodyParts[coveredPart];
-			foreach (var part in player.BodyParts.Where(part => part.Type == bodyPart))
+			foreach (var part in player.bodyParts.Where(part => part.bodyPartData.bodyPartType == bodyPart))
 			{
 				if (remove)
 				{
-					part.armor -= armor;
+					part.Armor -= armor;
 					break;
 				}
 				else
 				{
-					part.armor += armor;
+					part.Armor += armor;
 					break;
 				}
 			}

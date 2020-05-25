@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Health;
 using Light2D;
 using UnityEngine;
 using UnityEngine.Events;
@@ -132,7 +133,7 @@ public class  Matrix : MonoBehaviour
 	/// </summary>
 	public bool CanCloseDoorAt(Vector3Int position, bool isServer)
 	{
-		return IsPassableAt(position, position, isServer) && GetFirst<LivingHealthBehaviour>( position, isServer ) == null;
+		return IsPassableAt(position, position, isServer) && GetFirst<HealthSystem>( position, isServer ) == null;
 	}
 
 	/// Can one pass from `origin` to adjacent `position`?

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AdminTools;
+using Health;
 using UnityEngine;
 using Mirror;
 
@@ -459,7 +460,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	[Command]
 	public void CmdCommitSuicide()
 	{
-		GetComponent<LivingHealthBehaviour>().ApplyDamage(gameObject, 1000, AttackType.Internal, DamageType.Brute);
+		GetComponent<HealthSystem>().ApplyDamage(gameObject, 1000, AttackType.Internal, DamageType.Brute);
 	}
 
 	//Respawn action for Deathmatch v 0.1.3
@@ -521,8 +522,8 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	public void ServerSpawnPlayerGhost()
 	{
 		//Only force to ghost if the mind belongs in to that body
-		var currentMobID = GetComponent<LivingHealthBehaviour>().mobID;
-		if (GetComponent<LivingHealthBehaviour>().IsDead && !playerScript.IsGhost && playerScript.mind.bodyMobID == currentMobID)
+		var currentMobID = GetComponent<HealthSystem>().mobID;
+		if (GetComponent<HealthSystem>().IsDead && !playerScript.IsGhost && playerScript.mind.bodyMobID == currentMobID)
 		{
 			PlayerSpawn.ServerSpawnGhost(playerScript.mind);
 		}
@@ -658,8 +659,8 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 		if (!Cooldowns.TryStartServer(playerScript, CommonCooldowns.Instance.Melee)) return;
 
 		string hugged = huggedPlayer.GetComponent<PlayerScript>().playerName;
-		var lhb = gameObject.GetComponent<LivingHealthBehaviour>();
-		var lhbOther = huggedPlayer.GetComponent<LivingHealthBehaviour>();
+		var lhb = gameObject.GetComponent<HealthSystem>();
+		var lhbOther = huggedPlayer.GetComponent<HealthSystem>();
 		if (lhb != null && lhbOther != null && (lhb.FireStacks > 0 || lhbOther.FireStacks > 0))
 		{
 			lhb.ApplyDamage(huggedPlayer, 1, AttackType.Fire, DamageType.Burn);

@@ -1,10 +1,9 @@
-using UnityEngine;
-using Mirror;
+using Health;
 
 
-public class TileHealthBehaviour : LivingHealthBehaviour
+public class TileHealthBehaviour : HealthSystem
 {
-	protected override void OnDeathActions()
+	protected void OnDeathActions()
 	{
 
 	}

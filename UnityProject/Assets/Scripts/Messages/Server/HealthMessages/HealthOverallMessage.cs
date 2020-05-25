@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Health;
 using UnityEngine;
 using Mirror;
 
@@ -13,7 +14,7 @@ public class HealthOverallMessage : ServerMessage
 	public override void Process()
 	{
 		LoadNetworkObject(EntityToUpdate);
-		NetworkObject.GetComponent<LivingHealthBehaviour>().UpdateClientHealthStats(OverallHealth);
+		NetworkObject.GetComponent<HealthSystem>().UpdateClientHealthStats(OverallHealth);
 	}
 
 	public static HealthOverallMessage Send(GameObject recipient, GameObject entityToUpdate, float overallHealth)
