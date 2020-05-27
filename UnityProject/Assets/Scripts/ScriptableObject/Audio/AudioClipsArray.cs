@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 namespace SO.Audio
 {
 	[CreateAssetMenu(fileName = "AudioClipsList", menuName = "ScriptableObjects/Sounds/AudioClipsList", order = 0)]
-	public class AudioClipsList : ScriptableObject
+	public class AudioClipsArray : ScriptableObject
 	{
 		[SerializeField]
 		private AudioClip[] audioClips;

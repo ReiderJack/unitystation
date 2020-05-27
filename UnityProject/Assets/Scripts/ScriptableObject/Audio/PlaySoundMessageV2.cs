@@ -11,35 +11,48 @@ namespace SO.Audio
 {
 	public class PlaySoundMessageV2 : ServerMessage
 	{
-		/*public int ComponentLocation;
-		public uint NetObject;
-		public Type ComponentType;
 
-		public static readonly Dictionary<ushort, Type> componentIDToComponentType = new Dictionary<ushort, Type>(); //These are useful
-		public static readonly Dictionary<Type, ushort> componentTypeToComponentID = new Dictionary<Type, ushort>();*/
+		public int SoundPositionInList;
+		public float Volume;
+		public float Pitch;
 
-		/*static PlaySoundMessageV2()
-		{
-			//initialize id mappings
-			var alphabeticalComponentTypes =
-				typeof(SoundListEvent).Assembly.GetTypes()
-					.Where(type => typeof(SoundListEvent).IsAssignableFrom(type))
-					.OrderBy(type => type.FullName);
-			ushort i = 0;
-			foreach (var componentType in alphabeticalComponentTypes)
-			{
-				componentIDToComponentType.Add(i, componentType);
-				componentTypeToComponentID.Add(componentType, i);
-				i++;
-			}
-
-		}*/
-
+		public Vector3 Position;
 		public override void Process()
 		{
-			//LoadNetworkObject(NetObject);
+			var auidoSourceToPlay = new AudioSource()
+			{
+				clip = SoundSingleton.Instance.audioClips[SoundPositionInList],
+				volume = Volume,
+				pitch = Pitch
+			};
 
-			//SoundSingleton.Instance.
+			AudioSourcePool.PlayAtPosition(Position,auidoSourceToPlay,Pitch,Volume);
+		}
+
+		public static PlaySoundMessageV2 Send( GameObject recipient, Vector3 pos,  int audioClip, float pitch, float volume, GameObject sourceObj = null )
+		{
+
+			var netId = NetId.Empty;
+			if (sourceObj != null)
+			{
+				var netB = sourceObj.GetComponent<NetworkBehaviour>();
+				if (netB != null)
+				{
+					netId = netB.netId;
+				}
+			}
+
+			PlaySoundMessageV2 msg = new PlaySoundMessageV2
+			{
+				SoundPositionInList = audioClip,
+				Volume = volume,
+				Pitch = pitch,
+				Position = pos
+			};
+
+			msg.SendTo(recipient);
+
+			return msg;
 		}
 	}
 }

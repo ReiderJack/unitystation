@@ -1,17 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Mirror;
 
 namespace SO.Audio
 {
 	[CreateAssetMenu(fileName = "SoundSingleton", menuName = "Singleton/SoundSingleton")]
 	public class SoundSingleton : SingletonScriptableObject<SoundSingleton>
 	{
-		public List<SoundListEvent> uIActions = new List<SoundListEvent>();
-
-		public static Dictionary<ushort, SoundListEvent> IDtoSound = new Dictionary<ushort, SoundListEvent>();
-		public static Dictionary<SoundListEvent, ushort> SoundToID = new Dictionary<SoundListEvent, ushort>();
+		public List<AudioClip> audioClips = new List<AudioClip>();
 
 		private static bool Initialised = false;
 
@@ -20,45 +19,22 @@ namespace SO.Audio
 			Setup();
 		}
 
-		void Setup()
+		private void Setup()
 		{
-			ushort ID = 1;
-			var alphabeticaluIActions= uIActions.OrderBy(X => X.name);
+			// Sort all AudioClips by name
+			audioClips = audioClips.OrderBy(s => s.name).ToList();
 
-			foreach (var action in alphabeticaluIActions)
-			{
-				IDtoSound[ID] = action;
-				SoundToID[action] = ID;
-				ID++;
-			}
-			Initialised = true;
 		}
-
-		public SoundListEvent ReturnFromID(ushort ID)
+		private void OnValidate()
 		{
-			if (!Initialised)
-			{
-				Setup();
-			}
+			// Find all AudioClips in the project and add them to the list.
+			var audioClipList = Resources.LoadAll<AudioClip>("Sounds").OrderBy(s => s.name).ToList();
 
-			if (IDtoSound.ContainsKey(ID))
+			foreach (var audioClip in audioClipList)
 			{
-				return (IDtoSound[ID] as SoundListEvent);
-			}
-			return (null);
-		}
-
-		public void ActionCallServer(ushort ID, ConnectedPlayer SentByPlayer)
-		{
-			if (!Initialised)
-			{
-				Setup();
-			}
-			if (IDtoSound.ContainsKey(ID))
-			{
-				//IDtoSound[ID].SoundToID(SentByPlayer);
+				if (audioClips.Contains(audioClip)) continue;
+				audioClips.Add(audioClip);
 			}
 		}
-
 	}
 }

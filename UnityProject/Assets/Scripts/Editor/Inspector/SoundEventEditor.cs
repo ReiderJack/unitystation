@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Inspector.CustomDrawers
 {
-	[CustomEditor(typeof(SoundEvent), true)]
+	[CustomEditor(typeof(SoundListEvent), true)]
 	public class SoundEventEditor : Editor
 	{
 		[SerializeField]
@@ -33,7 +33,7 @@ namespace Inspector.CustomDrawers
 			EditorGUI.BeginDisabledGroup(serializedObject.isEditingMultipleObjects);
 			if (GUILayout.Button("Play"))
 			{
-				((SoundEvent)target).Play(audioSource);
+				((SoundListEvent)target).Play(audioSource);
 
 			}
 			EditorGUI.EndDisabledGroup();

@@ -32,7 +32,7 @@ public class MusicLobbyManager : MonoBehaviour
 
 	[SerializeField] private Slider musicLobbySlider = null;
 
-	[SerializeField] private AudioClipsList musicClips = null;
+	[SerializeField] private AudioClipsArray musicClips = null;
 
 	private bool isMusicMute = false;
 

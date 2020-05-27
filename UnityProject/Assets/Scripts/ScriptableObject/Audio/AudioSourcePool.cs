@@ -29,6 +29,9 @@ namespace SO.Audio
 		[SerializeField] private GameObject soundSpawnPrefab = null;
 		public List<SoundSpawn> pooledSources = new List<SoundSpawn>();
 
+		[SerializeField]
+		private AudioMixer audioMixer;
+
 		private void OnEnable()
 		{
 			SceneManager.activeSceneChanged += OnSceneChange;
@@ -114,6 +117,52 @@ namespace SO.Audio
 				sourceToCopy.GetCustomCurve(AudioSourceCurveType.SpatialBlend));
 			newSource.SetCustomCurve(AudioSourceCurveType.ReverbZoneMix,
 				sourceToCopy.GetCustomCurve(AudioSourceCurveType.ReverbZoneMix));
+		}
+
+		public static void PlayAtPosition(Vector3 worldPos, AudioSource audioClip, float pitch = -1, float volume = 1,
+											bool polyphonic = false, bool isGlobal = true, uint netId = NetId.Empty)
+		{
+			var sound = AudioSourcePool.Instance.GetSourceFromPool(audioClip);
+
+			if (pitch > 0)
+			{
+				sound.audioSource.pitch = pitch;
+			}
+
+			sound.audioSource.volume = volume;
+			if (netId != NetId.Empty)
+			{
+				if (NetworkIdentity.spawned.ContainsKey(netId))
+				{
+					sound.transform.parent = NetworkIdentity.spawned[netId].transform;
+					sound.transform.localPosition = Vector3.zero;
+				}
+				else
+				{
+					sound.transform.parent = Instance.transform;
+					sound.transform.position = worldPos;
+				}
+			}
+			else
+			{
+				sound.transform.parent = Instance.transform;
+				sound.transform.position = worldPos;
+			}
+
+			Instance.PlaySource(sound, polyphonic, isGlobal);
+		}
+
+		private void PlaySource(SoundSpawn source, bool polyphonic = false, bool Global = true)
+		{
+			source.audioSource.outputAudioMixerGroup = audioMixer.outputAudioMixerGroup;
+			if (polyphonic)
+			{
+				source.PlayOneShot();
+			}
+			else
+			{
+				source.PlayNormally();
+			}
 		}
 	}
 }
