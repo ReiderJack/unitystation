@@ -117,7 +117,7 @@ public class ConnectedTile : BasicTile
 			// create collider for tiles, None, Sprite or Grid
 			tileData.colliderType = Tile.ColliderType.Grid;
 			tileData.transform = Matrix4x4.Rotate(rotation);
-			tileData.flags = TileFlags.LockTransform;
+			//tileData.flags = TileFlags.LockTransform;
 		}
 	}
 
