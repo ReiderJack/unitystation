@@ -141,5 +141,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156c44f0c00d89e4383bb734092d7aba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundSpawnPrefab: {fileID: 7013270530123256728}
   audioSource: {fileID: 2538525614273923828}
   isPlaying: 0
