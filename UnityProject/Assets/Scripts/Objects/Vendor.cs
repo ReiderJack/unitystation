@@ -8,6 +8,7 @@ using UnityEngine.Events;
 /// when clicking on vendor with a VendingRestock item in hand.
 /// </summary>
 [RequireComponent(typeof(HasNetworkTab))]
+[RequireComponent(typeof(APCPoweredDevice))]
 public class Vendor : MonoBehaviour, ICheckedInteractable<HandApply>, IAPCPowered
 {
 	public List<VendorItem> VendorContent = new List<VendorItem>();
