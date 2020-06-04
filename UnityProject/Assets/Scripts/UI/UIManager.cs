@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using AdminTools;
+using Audio.Managers;
 using Mirror;
 using UI.UI_Bottom;
 using UnityEngine;
@@ -453,7 +454,7 @@ public class UIManager : MonoBehaviour
 			yield return null;
 		}
 
-		SoundManager.StopAmbient();
+		SoundAmbientManager.StopAmbient();
 
 	}
 

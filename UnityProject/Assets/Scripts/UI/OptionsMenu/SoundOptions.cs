@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Audio.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,7 +25,7 @@ namespace Unitystation.Options
 
         public void OnAmbientVolumeChange()
         {
-            SoundManager.AmbientVolume(ambientSlider.value);
+	        SoundAmbientManager.AmbientVolume(ambientSlider.value);
         }
 
 		public void OnMasterVolumeChange()
@@ -52,7 +53,7 @@ namespace Unitystation.Options
                 () =>
                 {
                     UIManager.ToggleTTS(false);
-                    SoundManager.AmbientVolume(1f);
+                    SoundAmbientManager.AmbientVolume(1f);
 					AudioListener.volume = 1;
                     Refresh();
                 },

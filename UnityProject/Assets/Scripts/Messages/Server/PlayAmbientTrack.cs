@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Audio.Managers;
 using UnityEngine;
 
 /// <summary>
@@ -10,7 +11,7 @@ public class PlayAmbientTrack : ServerMessage
 
 	public override void Process()
 	{
-		SoundManager.PlayAmbience(TrackName);
+		SoundAmbientManager.PlayAmbience(TrackName);
 	}
 
 	public static PlayAmbientTrack Send(GameObject recipient, string trackName)
