@@ -10,6 +10,8 @@ namespace Audio
 	{
 		[SerializeField] private AudioClip[] audioClips = null;
 
+		public AudioClip[] AudioClips => audioClips;
+
 		public AudioClip GetRandomClip()
 		{
 			if (audioClips == null || audioClips.Length == 0)
