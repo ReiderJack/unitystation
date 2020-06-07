@@ -3,7 +3,6 @@ using Audio.Managers;
 using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 /// <summary>
 /// Main component for nuke.
@@ -135,7 +134,7 @@ public class Nuke : NetworkBehaviour, ICheckedInteractable<HandApply>,IAdminInfo
 		}
 		detonated = true;
 
-		SoundAmbientManager.StopAmbient();
+		SoundAmbientManager.StopAllAudioSources();
 		//turning off all the UI except for the right panel
 		UIManager.PlayerHealthUI.gameObject.SetActive(false);
 		UIManager.Display.hudBottomHuman.gameObject.SetActive(false);

@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Audio.Managers;
-using Audio;
-using UnityEngine.Serialization;
+using Audio.Containers;
 
 public class ControlDisplays : MonoBehaviour
 {
@@ -171,7 +170,7 @@ public class ControlDisplays : MonoBehaviour
 
 	public void SetScreenForLobby()
 	{
-		SoundAmbientManager.StopAmbient();
+		SoundAmbientManager.StopAllAudioSources();
 		MusicManager.SongTracker.StartPlayingRandomPlaylist();
 		ResetUI(); //Make sure UI is back to default for next play
 		UIManager.PlayerHealthUI.gameObject.SetActive(false);
