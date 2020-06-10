@@ -7,17 +7,20 @@ using UnityEngine;
 public class PlayAmbientTrack : ServerMessage
 {
 	public string TrackName;
+	public bool isTrackLooped;
 
 	public override void Process()
 	{
-		SoundAmbientManager.PlayAmbience(TrackName);
+		SoundAmbientManager.StopAllTracks();
+		SoundAmbientManager.TryPlayTrack(TrackName,isTrackLooped);
 	}
 
-	public static PlayAmbientTrack Send(GameObject recipient, string trackName)
+	public static PlayAmbientTrack Send(GameObject recipient, string trackName, bool isLooped = false)
 	{
 		PlayAmbientTrack msg = new PlayAmbientTrack
 		{
-			TrackName = trackName,
+			isTrackLooped = isLooped,
+			TrackName = trackName
 		};
 
 		msg.SendTo(recipient);

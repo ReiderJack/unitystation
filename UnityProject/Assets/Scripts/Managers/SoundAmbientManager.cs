@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Audio.Containers;
+using UnityEditor;
 using UnityEngine.Audio;
 
 namespace Audio.Managers
@@ -33,40 +35,60 @@ namespace Audio.Managers
 		[SerializeField] private AudioClipsArray audioClips = null;
 		[SerializeField] private AudioMixerGroup audioMixerGroup = null;
 
-		private void Awake()
+		public static bool TryStopTrack(string trackName)
 		{
-			SetVolumeWithPlayerPrefs();
-		}
-
-		private void SetVolumeWithPlayerPrefs()
-		{
-			if (PlayerPrefs.HasKey(PlayerPrefKeys.AmbientVolumeKey))
+			AudioSource track = FindTrack(trackName);
+			if (track == null)
 			{
-				SetVolumeForAllAudioSources(PlayerPrefs.GetFloat(PlayerPrefKeys.AmbientVolumeKey));
+				Logger.Log($"Didn't find track: {track.name}", Category.SoundFX);
+				return false;
 			}
 			else
 			{
-				SetVolumeForAllAudioSources(1f);
+				track.loop = false;
+				track.Stop();
+				return true;
 			}
 		}
 
 		/// <summary>
-		/// Stops every track and starts playing new one
+		/// Stops all AudioSources
 		/// </summary>
-		/// <param name="ambientTrackName"> Name of a new track to play </param>
-		public static void PlayAmbience(string ambientTrackName)
+		public static void StopAllTracks()
+		{
+			foreach (AudioSource source in Instance.ambientTracks)
+			{
+				source.Stop();
+			}
+		}
+
+		public static bool TryPlayTrack(string trackName, bool isLooped = false)
+		{
+			AudioSource track = FindTrack(trackName);
+			if (track == null)
+			{
+				Logger.Log($"Didn't find track: {trackName}", Category.SoundFX);
+				return false;
+			}
+			else
+			{
+				track.loop = isLooped;
+				track.Play();
+				return true;
+			}
+		}
+
+		private static AudioSource FindTrack(string trackName)
 		{
 			foreach (var track in Instance.ambientTracks)
 			{
-				if (track.name == ambientTrackName)
+				if (track.name == trackName)
 				{
-					PlayAmbientTrack(track);
-				}
-				else
-				{
-					track.Stop();
+					return track;
 				}
 			}
+
+			return null;
 		}
 
 		/// <summary>
@@ -86,16 +108,7 @@ namespace Audio.Managers
 			track.Play();
 		}
 
-		/// <summary>
-		/// Stops every clip in the ambientTracks list
-		/// </summary>
-		public static void StopAllAudioSources()
-		{
-			foreach (AudioSource source in Instance.ambientTracks)
-			{
-				source.Stop();
-			}
-		}
+
 
 		/// <summary>
 		/// Sets all ambient tracks to a certain volume
@@ -113,38 +126,70 @@ namespace Audio.Managers
 			PlayerPrefs.Save();
 		}
 
-		#region Editor
+		#region Initialization
 
-		private void OnValidate()
+		private void Awake()
 		{
-			// Delay to safely initialize objects and avoid warnings
-			UnityEditor.EditorApplication.delayCall += () => HandleAudioSources();
+			SetVolumeWithPlayerPrefs();
+		}
+
+		private void SetVolumeWithPlayerPrefs()
+		{
+			if (PlayerPrefs.HasKey(PlayerPrefKeys.AmbientVolumeKey))
+			{
+				SetVolumeForAllAudioSources(PlayerPrefs.GetFloat(PlayerPrefKeys.AmbientVolumeKey));
+			}
+			else
+			{
+				SetVolumeForAllAudioSources(1f);
+			}
+		}
+
+		private void OnEnable()
+		{
+			CreateAudioSources();
+
+			// Cache AudioSources on the manager
+			var managerAudioSources = gameObject.GetComponentsInChildren<AudioSource>(true);
+			CacheAudioSources(managerAudioSources);
 		}
 
 		/// <summary>
-		/// Every time audioClips is changed in the editor
+		/// Cache audioSources so we can control them at runtime
+		/// </summary>
+		/// <param name="managerAudioSources"> AudioSources on the manager </param>
+		private void CacheAudioSources(IEnumerable<AudioSource> managerAudioSources)
+		{
+			foreach (var audioSource in managerAudioSources)
+			{
+				if (ambientTracks.Contains(audioSource) == false
+				    && audioClips.AudioClips.Any(a => a.name == audioSource.name))
+				{
+					ambientTracks.Add(audioSource);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Manager creates GameObjects with AudiosSource for each clip
 		/// </summary>
-		private void HandleAudioSources()
+		private void CreateAudioSources()
 		{
 			if (audioClips == null)
 			{
 				var audioSources = gameObject.GetComponentsInChildren<AudioSource>(true);
 				DestroyGameObjects(audioSources);
 				ambientTracks.Clear();
-				return;
 			}
+			else
+			{
+				// Compare AudioSources on the manager and create new
+				var managerAudioSources = gameObject.GetComponentsInChildren<AudioSource>(true);
+				CreateNewAudioSources(GetMissingClips(managerAudioSources));
 
-			// Compare AudioSources on the manager and create new
-			var managerAudioSources = gameObject.GetComponentsInChildren<AudioSource>(true);
-			CreateNewAudioSources(GetMissingClips(managerAudioSources));
-
-			// Clearing Manager children from audio sources which are not in audioClips
-			DestroyGameObjects(GetRedundantAudioSources(managerAudioSources));
-
-			// Cache AudioSources on the manager for runtime use
-			managerAudioSources = gameObject.GetComponentsInChildren<AudioSource>(true);
-			CacheAudioSources(managerAudioSources);
+				// Clearing Manager children from audio sources which are not in audioClips
+				DestroyGameObjects(GetRedundantAudioSources(managerAudioSources));
+			}
 		}
 
 		/// <summary>
@@ -207,26 +252,11 @@ namespace Audio.Managers
 			foreach (var source in audioSources)
 			{
 				if(audioClips.AudioClips.Any(c => c.name == source.name)) continue;
+				Logger.Log(source.name);
 				redundantAudioSources.Add(source);
 			}
 
 			return redundantAudioSources;
-		}
-
-		/// <summary>
-		/// Cache audioSources so we can control them at runtime
-		/// </summary>
-		/// <param name="managerAudioSources"> AudioSources on the manager </param>
-		private void CacheAudioSources(IEnumerable<AudioSource> managerAudioSources)
-		{
-			foreach (var audioSource in managerAudioSources)
-			{
-				if (ambientTracks.Contains(audioSource) == false
-					&& audioClips.AudioClips.Any(a => a.name == audioSource.name))
-				{
-					ambientTracks.Add(audioSource);
-				}
-			}
 		}
 
 		#endregion
