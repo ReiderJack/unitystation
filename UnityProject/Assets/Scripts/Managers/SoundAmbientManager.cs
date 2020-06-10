@@ -28,9 +28,6 @@ namespace Audio.Managers
 		/// Cache of audioSources on the Manager
 		/// </summary>
 		private List<AudioSource> ambientTracks = new List<AudioSource>();
-		public List<AudioSource> AmbientTracks => ambientTracks;
-
-		public AudioSource CurrentAmbientTrack { get; set; }
 
 		[SerializeField] private AudioClipsArray audioClips = null;
 		[SerializeField] private AudioMixerGroup audioMixerGroup = null;
@@ -76,6 +73,7 @@ namespace Audio.Managers
 				track.Play();
 				return true;
 			}
+
 		}
 
 		private static AudioSource FindTrack(string trackName)
@@ -98,7 +96,6 @@ namespace Audio.Managers
 		private static void PlayAmbientTrack(AudioSource track)
 		{
 			Logger.Log($"Playing ambient track: {track.name}", Category.SoundFX);
-			Instance.CurrentAmbientTrack = track;
 
 			if (PlayerPrefs.HasKey("AmbientVol"))
 			{
@@ -116,13 +113,12 @@ namespace Audio.Managers
 		/// <param name="newVolume"></param>
 		public static void SetVolumeForAllAudioSources(float newVolume)
 		{
-			float volume = Mathf.Clamp(newVolume, 0f, 0.25f);
 			foreach (AudioSource s in Instance.ambientTracks)
 			{
-				s.volume = volume;
+				s.volume = newVolume;
 			}
 
-			PlayerPrefs.SetFloat(PlayerPrefKeys.AmbientVolumeKey, volume);
+			PlayerPrefs.SetFloat(PlayerPrefKeys.AmbientVolumeKey, newVolume);
 			PlayerPrefs.Save();
 		}
 
