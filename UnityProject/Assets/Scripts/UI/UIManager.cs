@@ -450,7 +450,7 @@ public class UIManager : MonoBehaviour
 			yield return null;
 		}
 
-		SoundAmbientManager.StopAllTracks();
+		SoundAmbientManager.StopAllAudio();
 
 	}
 

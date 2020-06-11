@@ -11,6 +11,10 @@ namespace Audio.Containers
 
 		public AudioClip[] AudioClips => audioClips;
 
+		/// <summary>
+		/// Return null if there are no clips
+		/// </summary>
+		/// <returns> Random clip in range </returns>
 		public AudioClip GetRandomClip()
 		{
 			if (audioClips == null || audioClips.Length == 0)

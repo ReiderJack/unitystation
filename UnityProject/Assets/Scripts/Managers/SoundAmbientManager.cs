@@ -27,62 +27,92 @@ namespace Audio.Managers
 		/// <summary>
 		/// Cache of audioSources on the Manager
 		/// </summary>
-		private List<AudioSource> ambientTracks = new List<AudioSource>();
+		private List<AudioSource> ambientAudioSources = new List<AudioSource>();
 
 		[SerializeField] private AudioClipsArray audioClips = null;
 		[SerializeField] private AudioMixerGroup audioMixerGroup = null;
 
-		public static bool TryStopTrack(string trackName)
+		public static void StopAudio(string trackName)
 		{
-			AudioSource track = FindTrack(trackName);
-			if (track == null)
-			{
-				Logger.Log($"Didn't find track: {track.name}", Category.SoundFX);
-				return false;
-			}
-			else
-			{
-				track.loop = false;
-				track.Stop();
-				return true;
-			}
+			var audioSource = GetAudioSourceOrNull(trackName);
+			if (audioSource == null) return;
+
+			audioSource.loop = false;
+			audioSource.Stop();
 		}
 
-		/// <summary>
-		/// Stops all AudioSources
-		/// </summary>
-		public static void StopAllTracks()
+		public static void PlayAudio(string trackName, bool isLooped = false)
 		{
-			foreach (AudioSource source in Instance.ambientTracks)
-			{
-				source.Stop();
-			}
+			var audioSource = GetAudioSourceOrNull(trackName);
+			if (audioSource == null) return;
+
+			audioSource.loop = isLooped;
+			audioSource.Play();
 		}
 
-		public static bool TryPlayTrack(string trackName, bool isLooped = false)
+		private static AudioSource GetAudioSourceOrNull(string trackName)
 		{
-			AudioSource track = FindTrack(trackName);
-			if (track == null)
+			if (trackName == null)
 			{
-				Logger.Log($"Didn't find track: {trackName}", Category.SoundFX);
-				return false;
+				Logger.LogError($"Track name is null", Category.SoundFX);
+				return null;
 			}
-			else
-			{
-				track.loop = isLooped;
-				track.Play();
-				return true;
-			}
+
+			return TryFindAudioSource(trackName);
+		}
+
+		public static void StopAudio(AudioClip clip)
+		{
+			var audioSource = GetAudioSourceOrNull(clip);
+			if (audioSource == null) return;
+
+			audioSource.loop = false;
+			audioSource.Stop();
 
 		}
 
-		private static AudioSource FindTrack(string trackName)
+		public static bool PlayAudio(AudioClip clip, bool isLooped = false)
 		{
-			foreach (var track in Instance.ambientTracks)
+			var audioSource = GetAudioSourceOrNull(clip);
+			if (audioSource == null) return false;
+
+			audioSource.loop = isLooped;
+			audioSource.Play();
+
+			return true;
+		}
+
+		private static AudioSource GetAudioSourceOrNull(AudioClip clip)
+		{
+			if (clip == null)
 			{
-				if (track.name == trackName)
+				Logger.LogError($"Clip is null", Category.SoundFX);
+				return null;
+			}
+
+			return TryFindAudioSource(clip.name);
+		}
+
+		private static AudioSource TryFindAudioSource(string trackName)
+		{
+			var audioSource = FindAudioSource(trackName);
+
+			if (audioSource == null)
+			{
+				Logger.LogWarning($"Didn't find track: {trackName}", Category.SoundFX);
+				return null;
+			}
+
+			return audioSource;
+		}
+
+		private static AudioSource FindAudioSource(string trackName)
+		{
+			foreach (var audioSource in Instance.ambientAudioSources)
+			{
+				if (audioSource.name == trackName)
 				{
-					return track;
+					return audioSource;
 				}
 			}
 
@@ -90,22 +120,15 @@ namespace Audio.Managers
 		}
 
 		/// <summary>
-		/// Plays track and sets volume if player has prefs
+		/// Stops all AudioSources
 		/// </summary>
-		/// <param name="track"> Track to play </param>
-		private static void PlayAmbientTrack(AudioSource track)
+		public static void StopAllAudio()
 		{
-			Logger.Log($"Playing ambient track: {track.name}", Category.SoundFX);
-
-			if (PlayerPrefs.HasKey("AmbientVol"))
+			foreach (var audioSource in Instance.ambientAudioSources)
 			{
-				track.volume = Mathf.Clamp(PlayerPrefs.GetFloat("AmbientVol"), 0f, 0.25f);
+				audioSource.Stop();
 			}
-
-			track.Play();
 		}
-
-
 
 		/// <summary>
 		/// Sets all ambient tracks to a certain volume
@@ -113,7 +136,7 @@ namespace Audio.Managers
 		/// <param name="newVolume"></param>
 		public static void SetVolumeForAllAudioSources(float newVolume)
 		{
-			foreach (AudioSource s in Instance.ambientTracks)
+			foreach (AudioSource s in Instance.ambientAudioSources)
 			{
 				s.volume = newVolume;
 			}
@@ -158,10 +181,10 @@ namespace Audio.Managers
 		{
 			foreach (var audioSource in managerAudioSources)
 			{
-				if (ambientTracks.Contains(audioSource) == false
+				if (ambientAudioSources.Contains(audioSource) == false
 				    && audioClips.AudioClips.Any(a => a.name == audioSource.name))
 				{
-					ambientTracks.Add(audioSource);
+					ambientAudioSources.Add(audioSource);
 				}
 			}
 		}
@@ -175,7 +198,7 @@ namespace Audio.Managers
 			{
 				var audioSources = gameObject.GetComponentsInChildren<AudioSource>(true);
 				DestroyGameObjects(audioSources);
-				ambientTracks.Clear();
+				ambientAudioSources.Clear();
 			}
 			else
 			{

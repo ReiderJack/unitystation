@@ -134,7 +134,7 @@ public class Nuke : NetworkBehaviour, ICheckedInteractable<HandApply>,IAdminInfo
 		}
 		detonated = true;
 
-		SoundAmbientManager.StopAllTracks();
+		SoundAmbientManager.StopAllAudio();
 		//turning off all the UI except for the right panel
 		UIManager.PlayerHealthUI.gameObject.SetActive(false);
 		UIManager.Display.hudBottomHuman.gameObject.SetActive(false);

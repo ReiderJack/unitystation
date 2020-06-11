@@ -170,7 +170,7 @@ public class ControlDisplays : MonoBehaviour
 
 	public void SetScreenForLobby()
 	{
-		SoundAmbientManager.StopAllTracks();
+		SoundAmbientManager.StopAllAudio();
 		MusicManager.SongTracker.StartPlayingRandomPlaylist();
 		ResetUI(); //Make sure UI is back to default for next play
 		UIManager.PlayerHealthUI.gameObject.SetActive(false);
