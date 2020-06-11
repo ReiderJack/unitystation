@@ -1,9 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using Audio.Containers;
-using UnityEditor;
 using UnityEngine.Audio;
 
 namespace Audio.Managers
@@ -54,7 +52,7 @@ namespace Audio.Managers
 		{
 			if (trackName == null)
 			{
-				Logger.LogError($"Track name is null", Category.SoundFX);
+				Logger.LogError("Track name is null.", Category.SoundFX);
 				return null;
 			}
 
@@ -71,22 +69,20 @@ namespace Audio.Managers
 
 		}
 
-		public static bool PlayAudio(AudioClip clip, bool isLooped = false)
+		public static void PlayAudio(AudioClip clip, bool isLooped = false)
 		{
 			var audioSource = GetAudioSourceOrNull(clip);
-			if (audioSource == null) return false;
+			if (audioSource == null) return;
 
 			audioSource.loop = isLooped;
 			audioSource.Play();
-
-			return true;
 		}
 
 		private static AudioSource GetAudioSourceOrNull(AudioClip clip)
 		{
 			if (clip == null)
 			{
-				Logger.LogError($"Clip is null", Category.SoundFX);
+				Logger.LogError("Clip is null.", Category.SoundFX);
 				return null;
 			}
 
@@ -120,7 +116,7 @@ namespace Audio.Managers
 		}
 
 		/// <summary>
-		/// Stops all AudioSources
+		/// Stops all AudioSources on this manager
 		/// </summary>
 		public static void StopAllAudio()
 		{
@@ -136,9 +132,9 @@ namespace Audio.Managers
 		/// <param name="newVolume"></param>
 		public static void SetVolumeForAllAudioSources(float newVolume)
 		{
-			foreach (AudioSource s in Instance.ambientAudioSources)
+			foreach (var audioSource in Instance.ambientAudioSources)
 			{
-				s.volume = newVolume;
+				audioSource.volume = newVolume;
 			}
 
 			PlayerPrefs.SetFloat(PlayerPrefKeys.AmbientVolumeKey, newVolume);
