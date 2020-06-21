@@ -22,7 +22,7 @@ namespace Audio
 			}
 		}
 
-		private AudioClipsArray audioClips;
+		[SerializeField] private AudioClipsArray audioClips;
 
 		public AudioClipsArray AudioClips => audioClips;
 

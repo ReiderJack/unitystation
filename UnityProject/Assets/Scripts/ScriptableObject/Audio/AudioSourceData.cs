@@ -7,8 +7,8 @@ namespace Audio.Containers
 	public class AudioSourceData : AudioEvent
 	{
 		[SerializeField] private AudioClip audioClip;
-		[SerializeField] private float volume;
-		[SerializeField] private float pitch;
+		[SerializeField] [Range(0f,1f)] private float volume;
+		[SerializeField] [Range(-3f,3f)] private float pitch;
 
 		public override void Play(AudioSource audioSource)
 		{
