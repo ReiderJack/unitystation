@@ -11,6 +11,19 @@ namespace Audio.Containers
 
 		public AudioClip[] AudioClips => audioClips;
 
+		public int? GetClipNumberInArray(AudioClip clip)
+		{
+			for (int i = 0; i < audioClips.Length; i++)
+			{
+				if (audioClips[i] == clip)
+				{
+					return i;
+				}
+			}
+
+			return null;
+		}
+
 		/// <summary>
 		/// Return null if there are no clips
 		/// </summary>
