@@ -1,4 +1,5 @@
-﻿using CustomVariables;
+﻿using System;
+using CustomVariables;
 using CustomAttributes;
 using Messages.Server.Audio;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace Audio.Containers
 		[MinMaxFloatRange(0,1)] public RangedMinMaxFloat volume;
 		[MinMaxFloatRange(0,3)] public RangedMinMaxFloat pitch;
 		[SerializeField] private float maxDistance;
+		[SerializeField] private AnimationCurve animationCurve;
 
 		public override void Play(AudioSource audioSource)
 		{
@@ -32,6 +34,16 @@ namespace Audio.Containers
 			PlayAudioMessage.PlaySound(clipNumber.Value, volume.GetRandom(), pitch.GetRandom(), maxDistance, audioSource);
 		}
 
+		private void OnEnable()
+		{
+			if (animationCurve == null)
+			{
+				animationCurve = new AnimationCurve();
+				animationCurve.AddKey(0, 1);
+				animationCurve.AddKey(maxDistance, 0);
+			}
+		}
+
 		private void OnValidate()
 		{
 			if (maxDistance < 0)
@@ -39,6 +51,8 @@ namespace Audio.Containers
 				Debug.Log($"<color=red>Error: </color>Maximum distance must be positive in {this.name}!");
 				maxDistance = 0;
 			}
+
+
 		}
 	}
 }
