@@ -9,16 +9,16 @@ namespace Messages.Server.Audio
 		public int ClipNumber;
 		public float Volume;
 		public float Pitch;
-		public Vector3 Position;
+		public float MaxDistance;
 
 		public uint TargetNetId;
 
 		public override void Process()
 		{
-			AudioManager.Play(ClipNumber,Volume,Pitch, TargetNetId);
+			AudioManager.Play(ClipNumber, Volume, Pitch, MaxDistance, TargetNetId);
 		}
 
-		public static PlayAudioMessage PlaySound(int clipNumber, float volume, float pitch, GameObject audioSource)
+		public static PlayAudioMessage PlaySound(int clipNumber, float volume, float pitch, float maxDistance, GameObject audioSource)
 		{
 			var netId = NetId.Empty;
 			var position = new Vector3();
@@ -38,11 +38,11 @@ namespace Messages.Server.Audio
 				ClipNumber = clipNumber,
 				Volume = volume,
 				Pitch = pitch,
-				Position = position,
+				MaxDistance = maxDistance,
 				TargetNetId = netId
 			};
 
-			msg.SendToNearbyPlayers(position);
+			msg.SendToNearbyPlayers(position, maxDistance);
 			return msg;
 		}
 	}

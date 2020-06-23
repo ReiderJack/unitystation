@@ -1,5 +1,8 @@
-﻿using Messages.Server.Audio;
+﻿using CustomVariables;
+using CustomAttributes;
+using Messages.Server.Audio;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Audio.Containers
 {
@@ -7,24 +10,35 @@ namespace Audio.Containers
 	public class AudioSourceData : AudioEvent
 	{
 		[SerializeField] private AudioClip audioClip;
-		[SerializeField] [Range(0f,1f)] private float volume;
-		[SerializeField] [Range(-3f,3f)] private float pitch;
+		[MinMaxFloatRange(0,1)] public RangedMinMaxFloat volume;
+		[MinMaxFloatRange(0,3)] public RangedMinMaxFloat pitch;
+		[SerializeField] private float maxDistance;
 
 		public override void Play(AudioSource audioSource)
 		{
 			audioSource.clip = audioClip;
-			audioSource.volume = volume;
-			audioSource.pitch = pitch;
+			audioSource.volume = volume.GetRandom();
+			audioSource.pitch = pitch.GetRandom();
+			audioSource.maxDistance = maxDistance;
 
 			audioSource.Play();
 		}
 
 		public override void PlayServer(GameObject audioSource)
 		{
-			int? id = AudioManager.Instance.AudioClips.GetClipNumberInArray(audioClip);
-			if (id == null) return;
+			int? clipNumber = AudioManager.Instance.AudioClips.GetClipNumberInArray(audioClip);
+			if (clipNumber == null) return;
 
-			PlayAudioMessage.PlaySound(id.Value, volume, pitch, audioSource);
+			PlayAudioMessage.PlaySound(clipNumber.Value, volume.GetRandom(), pitch.GetRandom(), maxDistance, audioSource);
+		}
+
+		private void OnValidate()
+		{
+			if (maxDistance < 0)
+			{
+				Debug.Log($"<color=red>Error: </color>Maximum distance must be positive in {this.name}!");
+				maxDistance = 0;
+			}
 		}
 	}
 }

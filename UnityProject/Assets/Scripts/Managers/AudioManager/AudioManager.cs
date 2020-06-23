@@ -26,7 +26,7 @@ namespace Audio
 
 		public AudioClipsArray AudioClips => audioClips;
 
-		public static void Play(int clipNumber, float volume, float pitch, uint netId)
+		public static void Play(int clipNumber, float volume, float pitch, float maxDistance, uint netId)
 		{
 			if (netId == NetId.Empty) return;
 			if (!NetworkIdentity.spawned.ContainsKey(netId)) return;
@@ -34,9 +34,10 @@ namespace Audio
 			var audioSource = NetworkIdentity.spawned[netId].transform.gameObject.GetComponent<AudioSource>();
 
 			if (audioSource == null) return;
-			audioSource.clip = AudioManager.Instance.audioClips.AudioClips[clipNumber];
+			audioSource.clip = Instance.audioClips.AudioClips[clipNumber];
 			audioSource.volume = volume;
 			audioSource.pitch = pitch;
+			audioSource.maxDistance = maxDistance;
 
 			audioSource.Play();
 		}

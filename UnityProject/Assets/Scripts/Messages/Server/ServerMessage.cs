@@ -112,17 +112,17 @@ public abstract class ServerMessage : GameMessageBase
 	}
 
 	/// <summary>
-	/// Sends the network message only to players who are within a 15 tile radius
+	/// Sends the network message only to players who are within a maxDistance tile radius
 	/// of the worldPostion. This method disregards if the player is visible or not
 	/// </summary>
-	public void SendToNearbyPlayers(Vector2 worldPosition)
+	public void SendToNearbyPlayers(Vector2 worldPosition, float maxDistance = 15f)
 	{
 		var players = PlayerList.Instance.AllPlayers;
 
 		for (int i = players.Count - 1; i > 0; i--)
 		{
 			if (Vector2.Distance(worldPosition,
-				    players[i].GameObject.transform.position) > 15f)
+				    players[i].GameObject.transform.position) > maxDistance)
 			{
 				//Player in the list is too far away for this message, remove them:
 				players.Remove(players[i]);
