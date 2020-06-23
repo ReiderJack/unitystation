@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Audio;
-using Audio.Containers;
+﻿using Messages.Server;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,6 +17,7 @@ public class TestClipScript : MonoBehaviour, ICheckedInteractable<HandApply>
 	{
 		//AudioSourceData.PlayServer(gameObject);
 		testEvent?.Invoke(gameObject);
+		ShakeCameraMessage.SendShakeGround(interaction.Performer.AssumedWorldPosServer(), 20, 30, 1);
 	}
 }
 [System.Serializable]

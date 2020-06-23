@@ -12,7 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deea99d19cd8c7c498bd8173f155c30a, type: 3}
   m_Name: TestClip
   m_EditorClassIdentifier: 
-  audioClip: {fileID: 8300000, guid: 74f6bdb281c84f643b71db611e8baca7, type: 3}
-  volume: 0.883
-  pitch: 1.02
-  maxDistance: 28
+  audioClip: {fileID: 8300000, guid: 5951e7d2e6208438bb4848371d9b98d6, type: 3}
+  volume:
+    minValue: 0.78275186
+    maxValue: 0.9605003
+  pitch:
+    minValue: 0.55102026
+    maxValue: 1.7952602
+  maxDistance: 30.4
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.050087243
+      outSlope: -0.050087243
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.97943115
+      value: 0.950943
+      inSlope: -0.050087243
+      outSlope: -0.050087243
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
