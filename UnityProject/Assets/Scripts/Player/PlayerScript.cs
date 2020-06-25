@@ -4,6 +4,7 @@ using UnityEngine.Events;
 using Mirror;
 using System;
 using Health;
+using Audio.Managers;
 
 public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 {
@@ -57,6 +58,16 @@ public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 
 	public ChatIcon chatIcon { get; private set;}
 
+	/// <summary>
+	/// Serverside world position.
+	/// Outputs correct world position even if you're hidden (e.g. in a locker)
+	/// </summary>
+	public Vector3Int AssumedWorldPos => pushPull.AssumedWorldPositionServer();
+
+	/// <summary>
+	/// Serverside world position.
+	/// Returns InvalidPos if you're hidden (e.g. in a locker)
+	/// </summary>
 	public Vector3Int WorldPos => registerTile.WorldPositionServer;
 
 	/// <summary>
@@ -223,8 +234,7 @@ public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 			{
 				UIManager.LinkUISlots();
 				//play the spawn sound
-				SoundManager.Play("Ambient#");
-				SoundManager.PlayAmbience("ShipAmbience");
+				SoundAmbientManager.PlayAudio("ambigen8");
 				//Hide ghosts
 				var mask = Camera2DFollow.followControl.cam.cullingMask;
 				mask &= ~(1 << LayerMask.NameToLayer("Ghosts"));
@@ -378,13 +388,13 @@ public class PlayerScript : ManagedNetworkBehaviour, IMatrixRotation, IAdminInfo
 	}
 
 	//Tooltips inspector bar
-	public void OnHoverStart()
+	public void OnMouseEnter()
 	{
 		if (gameObject.IsAtHiddenPos()) return;
 		UIManager.SetToolTip = visibleName;
 	}
 
-	public void OnHoverEnd()
+	public void OnMouseExit()
 	{
 		UIManager.SetToolTip = "";
 	}

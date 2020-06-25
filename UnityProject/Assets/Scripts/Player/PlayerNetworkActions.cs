@@ -5,8 +5,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using AdminTools;
 using Health;
+using Audio.Containers;
 using UnityEngine;
 using Mirror;
+using DiscordWebhook;
+using InGameEvents;
 
 public partial class PlayerNetworkActions : NetworkBehaviour
 {
@@ -328,6 +331,16 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 		VotingManager.Instance.RegisterVote(connectedPlayer.UserId, isFor);
 	}
 
+	[Command]
+	public void CmdVetoRestartVote(string adminId, string adminToken)
+	{
+		var admin = PlayerList.Instance.GetAdmin(adminId, adminToken);
+		if (admin == null) return;
+
+		if (VotingManager.Instance == null) return;
+		VotingManager.Instance.VetoVote(adminId);
+	}
+
 	/// <summary>
 	/// Switches the pickup mode for the InteractableStorage in the players hands
 	/// TODO should probably be turned into some kind of UIAction component which can hold all these functions
@@ -367,7 +380,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	[TargetRpc]
 	public void TargetStopMusic(NetworkConnection target)
 	{
-		SoundManager.SongTracker.Stop();
+		MusicManager.SongTracker.Stop();
 	}
 
 	/// <summary>
@@ -460,7 +473,7 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	[Command]
 	public void CmdCommitSuicide()
 	{
-		GetComponent<HealthSystem>().ApplyDamage(gameObject, 1000, AttackType.Internal, DamageType.Brute);
+		GetComponent<LivingHealthBehaviour>().ApplyDamage(gameObject, 1000, AttackType.Internal, DamageType.Brute);
 	}
 
 	//Respawn action for Deathmatch v 0.1.3
@@ -522,8 +535,8 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	public void ServerSpawnPlayerGhost()
 	{
 		//Only force to ghost if the mind belongs in to that body
-		var currentMobID = GetComponent<HealthSystem>().mobID;
-		if (GetComponent<HealthSystem>().IsDead && !playerScript.IsGhost && playerScript.mind.bodyMobID == currentMobID)
+		var currentMobID = GetComponent<LivingHealthBehaviour>().mobID;
+		if (GetComponent<LivingHealthBehaviour>().IsDead && !playerScript.IsGhost && playerScript.mind.bodyMobID == currentMobID)
 		{
 			PlayerSpawn.ServerSpawnGhost(playerScript.mind);
 		}
@@ -659,8 +672,8 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 		if (!Cooldowns.TryStartServer(playerScript, CommonCooldowns.Instance.Melee)) return;
 
 		string hugged = huggedPlayer.GetComponent<PlayerScript>().playerName;
-		var lhb = gameObject.GetComponent<HealthSystem>();
-		var lhbOther = huggedPlayer.GetComponent<HealthSystem>();
+		var lhb = gameObject.GetComponent<LivingHealthBehaviour>();
+		var lhbOther = huggedPlayer.GetComponent<LivingHealthBehaviour>();
 		if (lhb != null && lhbOther != null && (lhb.FireStacks > 0 || lhbOther.FireStacks > 0))
 		{
 			lhb.ApplyDamage(huggedPlayer, 1, AttackType.Fire, DamageType.Burn);
@@ -885,5 +898,50 @@ public partial class PlayerNetworkActions : NetworkBehaviour
 	{
 		AdminOverlay.RequestFullUpdate(adminId, adminToken);
 	}
+
+	[Command]
+	public void CmdToggleOOCMute(string adminId, string adminToken)
+	{
+		var admin = PlayerList.Instance.GetAdmin(adminId, adminToken);
+		if (admin == null) return;
+
+		string msg;
+
+		if (Chat.OOCMute)
+		{
+			Chat.OOCMute = false;
+			msg = "OOC has been unmuted";
+		}
+		else
+		{
+			Chat.OOCMute = true;
+			msg = "OOC has been muted";
+		}
+
+		Chat.AddGameWideSystemMsgToChat($"<color=blue>{msg}</color>");
+		DiscordWebhookMessage.Instance.AddWebHookMessageToQueue(DiscordWebhookURLs.DiscordWebhookOOCURL, msg, "");
+	}
+
+	[Command]
+	public void CmdTriggerGameEvent(string adminId, string adminToken, int eventIndex, bool isFake, bool announceEvent)
+	{
+		var admin = PlayerList.Instance.GetAdmin(adminId, adminToken);
+		if (admin == null) return;
+
+		InGameEventsManager.Instance.TriggerSpecificEvent(eventIndex, isFake, PlayerList.Instance.GetByUserID(adminId).Username, announceEvent);
+	}
 	#endregion
+
+	[Command]
+	public void CmdRequestSpell(int spellIndex)
+	{
+		foreach (var spell in playerScript.mind.Spells)
+		{
+			if (spell.SpellData.Index == spellIndex)
+			{
+				spell.CallActionServer(PlayerList.Instance.Get(gameObject));
+				return;
+			}
+		}
+	}
 }

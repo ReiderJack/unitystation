@@ -391,7 +391,7 @@ public class PlayerMove : NetworkBehaviour, IRightClickable, IServerSpawn, IActi
 
 		if (PlayerManager.LocalPlayer == gameObject)
 		{
-			UIActionManager.Toggle(this, newBuckledTo != NetId.Empty);
+			UIActionManager.ToggleLocal(this, newBuckledTo != NetId.Empty);
 		}
 
 		buckledObjectNetId = newBuckledTo;
