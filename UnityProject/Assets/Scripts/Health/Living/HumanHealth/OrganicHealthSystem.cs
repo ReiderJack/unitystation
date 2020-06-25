@@ -105,7 +105,7 @@ namespace Health
 					string descriptor = null;
 					if (player != null)
 					{
-						descriptor = player?.Script?.characterSettings?.PossessivePronoun();
+						//descriptor = player?.Script?.characterSettings?.PossessivePronoun();
 					}
 
 					if (descriptor == null)

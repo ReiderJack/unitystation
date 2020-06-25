@@ -1051,8 +1051,8 @@ namespace Health
 			var cs = GetComponentInParent<PlayerScript>()?.characterSettings;
 			if (cs != null)
 			{
-				pronoun = cs.PersonalPronoun();
-				pronoun = pronoun[0].ToString().ToUpper() + pronoun.Substring(1);
+				//pronoun = cs.PersonalPronoun();
+				//pronoun = pronoun[0].ToString().ToUpper() + pronoun.Substring(1);
 			}
 
 			healthString = pronoun + " is " + healthString + (respiratorySystem.IsSuffocating && !IsDead ? " " + pronoun + " is having trouble breathing!" : "");
