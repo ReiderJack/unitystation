@@ -11,7 +11,7 @@ namespace CustomInspectors
 
 		private void OnEnable()
 		{
-			audioSource = EditorUtility.CreateGameObjectWithHideFlags("Audio preview",HideFlags.HideAndDontSave,typeof(AudioSource)).GetComponent<AudioSource>();
+			audioSource = EditorUtility.CreateGameObjectWithHideFlags("Audio preview", HideFlags.HideAndDontSave, typeof(AudioSource)).GetComponent<AudioSource>();
 		}
 
 		private void OnDisable()

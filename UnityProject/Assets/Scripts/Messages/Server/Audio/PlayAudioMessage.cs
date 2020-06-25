@@ -30,7 +30,6 @@ namespace Messages.Server.Audio
 				{
 					netId = netB.netId;
 				}
-
 			}
 
 			PlayAudioMessage msg = new PlayAudioMessage
