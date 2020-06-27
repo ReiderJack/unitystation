@@ -558,22 +558,21 @@ public partial class CustomNetTransform
 	private bool ValidateFloating(Vector3 origin, Vector3 goal)
 	{
 		//		Logger.Log( $"{gameObject.name} check {origin}->{goal}. Speed={serverState.Speed}" );
-		Vector3Int intOrigin = Vector3Int.RoundToInt(origin);
-		Vector3Int intGoal = Vector3Int.RoundToInt(goal);
-		var info = serverState.ActiveThrow;
-		List<LivingHealthBehaviour> creaturesToHit = LivingCreaturesInPosition(intGoal);
+		var startPosition = Vector3Int.RoundToInt(origin);
+		var targetPosition = Vector3Int.RoundToInt(goal);
 
-		if (serverState.Speed > SpeedHitThreshold &&
-		    creaturesToHit != null)
+		var info = serverState.ActiveThrow;
+		List<LivingHealthBehaviour> creaturesToHit =
+			Vector3Int.RoundToInt(serverState.ActiveThrow.OriginWorldPos) == targetPosition ?
+				null : LivingCreaturesInPosition(targetPosition);
+
+		if (serverState.Speed > SpeedHitThreshold)
 		{
-			OnHit(intGoal, info, creaturesToHit, MatrixManager.GetDamageableTilemapsAt(intGoal));
-			if (info.ThrownBy != null)
-			{
-				return false;
-			}
+			OnHit(targetPosition, info, creaturesToHit);
+			DamageTiles( targetPosition, info,MatrixManager.GetDamageableTilemapsAt(targetPosition));
 		}
 
-		if (CanDriftTo(intOrigin, intGoal, isServer : true))
+		if (CanDriftTo(startPosition, targetPosition, isServer : true))
 		{
 			//if we can keep drifting and didn't hit anything, keep floating. If we did hit something, only stop if we are impassable (we bonked something),
 			//otherwise keep drifting through (we sliced / glanced off them)
@@ -586,31 +585,10 @@ public partial class CustomNetTransform
 	/// Lists objects to be damaged on given tile. Prob should be moved elsewhere
 	private List<LivingHealthBehaviour> LivingCreaturesInPosition(Vector3Int position)
 	{
-		//Not damaging anything at launch tile
-		if (IsLaunchTile(position))
-		{
-			return null;
-		}
-
-		var objectsOnTile =
-			MatrixManager.GetAt<LivingHealthBehaviour>(position, isServer: true);
-
-		if (objectsOnTile == null) return null;
-
-		var damageable =
-			objectsOnTile
+		return MatrixManager.GetAt<LivingHealthBehaviour>(position, isServer: true)?
 				.Where(creature => creature.gameObject != gameObject && creature.IsDead == false)
+				.Where(CanHitObject)
 				.ToList();
-
-		foreach (var obj in objectsOnTile)
-		{
-			if (CanHitObject(obj))
-			{
-				damageable.Add(obj);
-			}
-		}
-
-		return damageable.Count > 0 ? damageable : null;
 	}
 
 	private bool CanHitObject(Component obj)
@@ -627,48 +605,51 @@ public partial class CustomNetTransform
 		return true;
 	}
 
-	private bool IsLaunchTile(Vector3Int atPos)
-	{
-		return Vector3Int.RoundToInt(serverState.ActiveThrow.OriginWorldPos) == atPos;
-	}
-
 	/// <summary>
 	/// Hit for thrown (non-tile-snapped) items
 	/// </summary>
-	protected virtual void OnHit(Vector3Int pos, ThrowInfo info, List<LivingHealthBehaviour> objects, List<TilemapDamage> tiles)
+	protected virtual void OnHit(Vector3Int pos, ThrowInfo info, List<LivingHealthBehaviour> objects)
+	{
+		if (CheckItemAttributes(pos)) return;
+		//Hurting objects
+		if (objects == null || objects.Count <= 0) return;
+
+		for (var i = 0; i < objects.Count; i++)
+		{
+			//Remove cast to int when moving health values to float
+			var damage = (int)(ItemAttributes.ServerThrowDamage);
+			var hitZone = info.Aim.Randomize();
+			objects[i].ApplyDamageToBodypart(info.ThrownBy, damage, AttackType.Melee, DamageType.Brute, hitZone);
+			Chat.AddThrowHitMsgToChat(gameObject,objects[i].gameObject, hitZone);
+		}
+		//hit sound
+		SoundManager.PlayNetworkedAtPos("GenericHit", transform.position, 1f, sourceObj: gameObject);
+	}
+
+
+	private void DamageTiles(Vector3Int pos, ThrowInfo info, List<TilemapDamage> tiles)
+	{
+		if (CheckItemAttributes(pos)) return;
+		if (tiles == null) return;
+
+		//Hurting tiles
+		foreach (var tileDmg in tiles)
+		{
+			var damage = (int) (ItemAttributes.ServerThrowDamage);
+			tileDmg.DoThrowDamage(pos, info, damage);
+		}
+	}
+
+	private bool CheckItemAttributes(Vector3Int pos)
 	{
 		if (ItemAttributes == null)
 		{
-			Logger.LogWarningFormat("{0}: Tried to hit stuff at pos {1} but have no ItemAttributes.", Category.Throwing, gameObject.name, pos);
-			return;
-		}
-		//Hurting tiles
-		for (var i = 0; i < tiles.Count; i++)
-		{
-			var tileDmg = tiles[i];
-			var damage = (int)(ItemAttributes.ServerThrowDamage);
-			tileDmg.DoThrowDamage(pos, info, damage);
+			Logger.LogWarningFormat("{0}: Tried to hit stuff at pos {1} but have no ItemAttributes.", Category.Throwing,
+				gameObject.name, pos);
+			return true;
 		}
 
-		//Hurting objects
-		if (objects != null && objects.Count > 0)
-		{
-			for (var i = 0; i < objects.Count; i++)
-			{
-				//Remove cast to int when moving health values to float
-				var damage = (int)(ItemAttributes.ServerThrowDamage);
-				var hitZone = info.Aim.Randomize();
-				objects[i].ApplyDamageToBodypart(info.ThrownBy, damage, AttackType.Melee, DamageType.Brute, hitZone);
-				Chat.AddThrowHitMsgToChat(gameObject,objects[i].gameObject, hitZone);
-			}
-			//hit sound
-			SoundManager.PlayNetworkedAtPos("GenericHit", transform.position, 1f, sourceObj: gameObject);
-		}
-		else
-		{
-			//todo different sound for no-damage hit?
-			SoundManager.PlayNetworkedAtPos("GenericHit", transform.position, 0.8f, sourceObj: gameObject);
-		}
+		return false;
 	}
 
 	///Special rounding for collision detection
@@ -699,7 +680,11 @@ public partial class CustomNetTransform
 	{
 		// If we're being thrown, collide like being airborne.
 
-		CollisionType colType = (isServer ? IsBeingThrownServer : IsBeingThrownClient) ? CollisionType.Airborne : CollisionType.Player;
+		CollisionType colType =
+			(isServer ?
+			IsBeingThrownServer : IsBeingThrownClient) ?
+					CollisionType.Airborne : CollisionType.Player;
+
 		return MatrixManager.IsPassableAt(originPos, targetPos, isServer, collisionType: colType, includingPlayers : false);
 	}
 
