@@ -561,11 +561,12 @@ public partial class CustomNetTransform
 		Vector3Int intOrigin = Vector3Int.RoundToInt(origin);
 		Vector3Int intGoal = Vector3Int.RoundToInt(goal);
 		var info = serverState.ActiveThrow;
-		List<LivingHealthBehaviour> hitDamageables = null;
+		List<LivingHealthBehaviour> creaturesToHit = LivingCreaturesInPosition(intGoal);
 
-		if (serverState.Speed > SpeedHitThreshold && HittingSomething(intGoal, info.ThrownBy, out hitDamageables))
+		if (serverState.Speed > SpeedHitThreshold &&
+		    creaturesToHit != null)
 		{
-			OnHit(intGoal, info, hitDamageables, MatrixManager.GetDamageableTilemapsAt(intGoal));
+			OnHit(intGoal, info, creaturesToHit, MatrixManager.GetDamageableTilemapsAt(intGoal));
 			if (info.ThrownBy != null)
 			{
 				return false;
@@ -576,10 +577,59 @@ public partial class CustomNetTransform
 		{
 			//if we can keep drifting and didn't hit anything, keep floating. If we did hit something, only stop if we are impassable (we bonked something),
 			//otherwise keep drifting through (we sliced / glanced off them)
-			return (hitDamageables == null || hitDamageables.Count == 0) ||  (registerTile && registerTile.IsPassable(true));
+			return (creaturesToHit == null || creaturesToHit.Count == 0) ||  (registerTile && registerTile.IsPassable(true));
 		}
 
 		return false;
+	}
+
+	/// Lists objects to be damaged on given tile. Prob should be moved elsewhere
+	private List<LivingHealthBehaviour> LivingCreaturesInPosition(Vector3Int position)
+	{
+		//Not damaging anything at launch tile
+		if (IsLaunchTile(position))
+		{
+			return null;
+		}
+
+		var objectsOnTile =
+			MatrixManager.GetAt<LivingHealthBehaviour>(position, isServer: true);
+
+		if (objectsOnTile == null) return null;
+
+		var damageable =
+			objectsOnTile
+				.Where(creature => creature.gameObject != gameObject && creature.IsDead == false)
+				.ToList();
+
+		foreach (var obj in objectsOnTile)
+		{
+			if (CanHitObject(obj))
+			{
+				damageable.Add(obj);
+			}
+		}
+
+		return damageable.Count > 0 ? damageable : null;
+	}
+
+	private bool CanHitObject(Component obj)
+	{
+		var commonTransform = obj.GetComponent<IPushable>();
+		if (commonTransform == null) return false;
+
+		if (ServerImpulse.To2Int() == commonTransform.ServerImpulse.To2Int() &&
+		    SpeedServer <= commonTransform.SpeedServer)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	private bool IsLaunchTile(Vector3Int atPos)
+	{
+		return Vector3Int.RoundToInt(serverState.ActiveThrow.OriginWorldPos) == atPos;
 	}
 
 	/// <summary>
@@ -651,61 +701,6 @@ public partial class CustomNetTransform
 
 		CollisionType colType = (isServer ? IsBeingThrownServer : IsBeingThrownClient) ? CollisionType.Airborne : CollisionType.Player;
 		return MatrixManager.IsPassableAt(originPos, targetPos, isServer, collisionType: colType, includingPlayers : false);
-	}
-
-	/// Lists objects to be damaged on given tile. Prob should be moved elsewhere
-	private bool HittingSomething(Vector3Int atPos, GameObject thrownBy, out List<LivingHealthBehaviour> victims)
-	{
-		//Not damaging anything at launch tile
-		if (Vector3Int.RoundToInt(serverState.ActiveThrow.OriginWorldPos) == atPos)
-		{
-			victims = null;
-			return false;
-		}
-		var objectsOnTile = MatrixManager.GetAt<LivingHealthBehaviour>(atPos, isServer : true);
-		if (objectsOnTile != null)
-		{
-			var damageables = new List<LivingHealthBehaviour>();
-			for (var i = 0; i < objectsOnTile.Count; i++)
-			{
-				LivingHealthBehaviour obj = objectsOnTile[i];
-				//Skip thrower for now
-				if (obj.gameObject == thrownBy)
-				{
-					Logger.Log($"{thrownBy.name} not hurting himself", Category.Throwing);
-					continue;
-				}
-
-				//Skip dead bodies
-				if (obj.IsDead)
-				{
-					continue;
-				}
-
-				var commonTransform = obj.GetComponent<IPushable>();
-				if (commonTransform != null)
-				{
-					if (this.ServerImpulse.To2Int() == commonTransform.ServerImpulse.To2Int() &&
-						this.SpeedServer <= commonTransform.SpeedServer)
-					{
-						Logger.LogTraceFormat("{0} not hitting {1} as they fly in the same direction", Category.Throwing, gameObject.name,
-							obj.gameObject.name);
-						continue;
-					}
-				}
-
-				damageables.Add(obj);
-			}
-
-			if (damageables.Count > 0)
-			{
-				victims = damageables;
-				return true;
-			}
-		}
-
-		victims = null;
-		return false;
 	}
 
 	#region spess interaction logic
