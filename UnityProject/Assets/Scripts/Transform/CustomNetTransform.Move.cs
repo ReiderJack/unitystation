@@ -231,47 +231,17 @@ public partial class CustomNetTransform
 		{
 			return isRecursive;
 		}
-		Vector3 worldPos = predictedState.WorldPosition;
-		Vector3Int intOrigin = Vector3Int.RoundToInt(worldPos);
 
-		Vector3 moveDelta;
-		if (!isRecursive)
-		{ //Normal delta if not recursive
-			moveDelta = (Vector3)predictedState.WorldImpulse * predictedState.Speed * Time.deltaTime;
-		}
-		else
-		{ //Artificial delta if recursive
-			moveDelta = goal - worldPos;
-		}
+		Vector3 worldPos = predictedState.WorldPosition;
+		Vector3 moveDelta = GetMoveDeltaClient(goal, isRecursive, worldPos);
 
 		float distance = moveDelta.magnitude;
-		Vector3 newGoal;
+		Vector3 newGoal = GetNewGoalClient(distance, worldPos, moveDelta);
 
-		if (distance > 1)
-		{
-			//limit goal to just one tile away and run this method recursively afterwards
-			newGoal = worldPos + (Vector3)predictedState.WorldImpulse;
-		}
-		else
-		{
-			newGoal = worldPos + moveDelta;
-		}
-		Vector3Int intGoal = Vector3Int.RoundToInt(newGoal);
+		var intGoal = Vector3Int.RoundToInt(newGoal);
+		var intOrigin = Vector3Int.RoundToInt(worldPos);
 
-		bool isWithinTile = intOrigin == intGoal; //same tile, no need to validate stuff
-		if (isWithinTile || CanDriftTo(intOrigin, intGoal, isServer : false))
-		{
-			//advance
-			predictedState.WorldPosition += moveDelta;
-		}
-		else
-		{
-			//stop
-			Logger.LogTraceFormat(PREDICTIVE_STOP_TO, Category.Transform, gameObject.name, worldPos, intGoal);
-			//			clientState.Speed = 0f;
-			predictedState.WorldImpulse = Vector2.zero;
-			predictedState.SpinFactor = 0;
-		}
+		ProcessFloatingClient(intOrigin, intGoal, moveDelta);
 
 		if (distance > 1)
 		{
@@ -279,6 +249,51 @@ public partial class CustomNetTransform
 		}
 
 		return true;
+	}
+
+	private void ProcessFloatingClient(Vector3Int intOrigin, Vector3Int intGoal, Vector3 moveDelta)
+	{
+		if (intOrigin == intGoal ||
+		    CanDriftTo(intOrigin, intGoal, isServer: false))
+		{
+			predictedState.WorldPosition += moveDelta;
+		}
+		else
+		{
+			//stop
+			//Logger.LogTraceFormat(PREDICTIVE_STOP_TO, Category.Transform, gameObject.name, worldPos, intGoal);
+			//			clientState.Speed = 0f;
+			predictedState.WorldImpulse = Vector2.zero;
+			predictedState.SpinFactor = 0;
+		}
+	}
+
+	private Vector3 GetMoveDeltaClient(Vector3 goal, bool isRecursive, Vector3 worldPos)
+	{
+		if (isRecursive)
+		{
+			//Artificial delta if recursive
+			return goal - worldPos;
+		}
+		else
+		{
+			//Normal delta if not recursive
+			return (Vector3) predictedState.WorldImpulse * predictedState.Speed * Time.deltaTime;
+		}
+	}
+
+	private Vector3 GetNewGoalClient(float distance, Vector3 worldPos, Vector3 moveDelta)
+	{
+		if (distance > 1)
+		{
+			//limit goal to just one tile away and run this method recursively afterwards
+			return worldPos + (Vector3) predictedState.WorldImpulse;
+		}
+		else
+		{
+			return worldPos + moveDelta;
+		}
+
 	}
 
 	/// Clientside lerping (transform to clientState position)
@@ -459,66 +474,18 @@ public partial class CustomNetTransform
 		}
 
 		Vector3 worldPosition = serverState.WorldPosition;
-		Vector3 moveDelta;
+		Vector3 moveDelta = GetMoveDeltaServer(goal, isRecursive, worldPosition);
 
-		if (!isRecursive)
-		{ //Normal delta if not recursive
-			moveDelta = (Vector3)serverState.WorldImpulse * serverState.Speed * Time.deltaTime;
-		}
-		else
-		{ //Artificial delta if recursive
-			moveDelta = goal - worldPosition;
-		}
+		var intOrigin = Vector3Int.RoundToInt(worldPosition);
 
-		Vector3Int intOrigin = Vector3Int.RoundToInt(worldPosition);
-
-		if (intOrigin.x > 18000 || intOrigin.x < -18000 || intOrigin.y > 18000 || intOrigin.y < -18000)
-		{
-			Stop();
-			Logger.Log($"ITEM {transform.name} was forced to stop at {intOrigin}", Category.Movement);
-			return true;
-		}
+		if (IsItemFarAway(intOrigin)) return true;
 
 		float distance = moveDelta.magnitude;
-		Vector3 newGoal;
+		Vector3 newGoal = GetNewGoalServer(distance, worldPosition, moveDelta);
 
-		if (distance > 1)
-		{
-			//limit goal to just one tile away and run this method recursively afterwards
-			newGoal = worldPosition + (Vector3)serverState.WorldImpulse;
-		}
-		else
-		{
-			newGoal = worldPosition + moveDelta;
-		}
-		Vector3Int intGoal = Vector3Int.RoundToInt(newGoal);
+		var intGoal = Vector3Int.RoundToInt(newGoal);
 
-		bool isWithinTile = intOrigin == intGoal; //same tile, no need to validate stuff
-		if (isWithinTile || ValidateFloating(worldPosition, newGoal))
-		{
-			AdvanceMovement(worldPosition, newGoal);
-		}
-		else
-		{
-			if (serverState.Speed >= PushPull.HIGH_SPEED_COLLISION_THRESHOLD && IsTileSnap)
-			{
-				//Stop first (reach tile), then inform about collision
-				var collisionInfo = new CollisionInfo
-				{
-					Speed = serverState.Speed,
-						Size = this.Size,
-						CollisionTile = intGoal
-				};
-
-				Stop();
-
-				OnHighSpeedCollision().Invoke(collisionInfo);
-			}
-			else
-			{
-				Stop();
-			}
-		}
+		ProcessFloatingServer(intOrigin, intGoal, worldPosition, newGoal);
 
 		if (distance > 1)
 		{
@@ -526,6 +493,75 @@ public partial class CustomNetTransform
 		}
 
 		return true;
+	}
+
+	private void ProcessFloatingServer(
+		Vector3Int intOrigin,
+		Vector3Int intGoal,
+		Vector3 worldPosition,
+		Vector3 newGoal
+		)
+	{
+		if (intOrigin == intGoal || ValidateFloating(worldPosition, newGoal))
+		{
+			AdvanceMovement(worldPosition, newGoal);
+		}
+		else
+		{
+			ProcessCollisionServer(intGoal);
+		}
+	}
+
+	private void ProcessCollisionServer(Vector3Int intGoal)
+	{
+		if (serverState.Speed >= PushPull.HIGH_SPEED_COLLISION_THRESHOLD &&
+		    IsTileSnap)
+		{
+			//Stop first (reach tile), then inform about collision
+			var collisionInfo = new CollisionInfo
+			{
+				Speed = serverState.Speed,
+				Size = this.Size,
+				CollisionTile = intGoal
+			};
+
+			Stop();
+			OnHighSpeedCollision().Invoke(collisionInfo);
+		}
+		else
+		{
+			Stop();
+		}
+	}
+
+	private Vector3 GetNewGoalServer(
+		float dist,
+		Vector3 pos,
+		Vector3 delta)
+	{
+		return pos + (dist > 1
+			       ? (Vector3) serverState.WorldImpulse
+			       : pos + delta);
+	}
+
+	private bool IsItemFarAway(Vector3Int intOrigin)
+	{
+		if (intOrigin.x > 18000 || intOrigin.x < -18000 || intOrigin.y > 18000 || intOrigin.y < -18000)
+		{
+			Stop();
+			Logger.Log($"ITEM {transform.name} was forced to stop at {intOrigin}", Category.Movement);
+			return true;
+		}
+
+		return false;
+	}
+
+	private Vector3 GetMoveDeltaServer(Vector3 goal, bool isRecursive, Vector3 worldPosition)
+	{
+		//Artificial delta if recursive
+		return isRecursive ?
+			goal - worldPosition :
+			(Vector3) serverState.WorldImpulse * (serverState.Speed * Time.deltaTime);
 	}
 
 	[Server]
@@ -617,7 +653,7 @@ public partial class CustomNetTransform
 
 		if (serverState.Speed > SpeedHitThreshold)
 		{
-			OnHit(targetPosition, info, creaturesToHit);
+			DamageLivingCreatures(targetPosition, info, creaturesToHit);
 			DamageTiles( targetPosition, info,MatrixManager.GetDamageableTilemapsAt(targetPosition));
 		}
 
@@ -657,7 +693,7 @@ public partial class CustomNetTransform
 	/// <summary>
 	/// Hit for thrown (non-tile-snapped) items
 	/// </summary>
-	private void OnHit(Vector3Int pos, ThrowInfo info, List<LivingHealthBehaviour> objects)
+	private void DamageLivingCreatures(Vector3Int pos, ThrowInfo info, List<LivingHealthBehaviour> objects)
 	{
 		if (ItemAttributes == null) return;
 		if (objects == null || objects.Count <= 0) return;
