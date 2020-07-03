@@ -11,10 +11,10 @@ public class BulletKinetic : BulletBehaviour
 	public override void Shoot(Vector2 dir, GameObject controlledByPlayer, Gun fromWeapon, BodyPartType targetZone = BodyPartType.Chest)
 	{
 		base.Shoot(dir, controlledByPlayer, fromWeapon, targetZone);
-		StartCoroutine(countTiles());
+		//StartCoroutine(countTiles());
 	}
 
-	public override void HandleCollisionEnter2D(Collision2D coll)
+	/*public override void HandleCollisionEnter2D(Collision2D coll)
 	{
 		//This one is not working right now as intended
 		//Bullet get the wall tiles of the station
@@ -38,8 +38,7 @@ public class BulletKinetic : BulletBehaviour
 			rigidBody.velocity = Vector2.zero;
 			StartCoroutine(KineticAnim());
 		}
-
-	}
+	}*/
 
 	protected void ReturnToPool(Collision2D coll)
 	{

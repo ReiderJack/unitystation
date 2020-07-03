@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Events;
+
 /// <summary>
 /// Main behavior for a bullet, handles shooting and managing the trail rendering. Collision events are fired on
 /// the child gameobject's BulletColliderBehavior and passed up to this component.
@@ -13,15 +15,13 @@ using System.Collections.Generic;
 /// </summary>
 public class BulletBehaviour : MonoBehaviour
 {
-	private BodyPartType bodyAim;
+
 	[Range(0, 100)]
 	public float damage = 25;
-	private GameObject shooter;
 	protected Gun weapon;
 	public DamageType damageType;
 	public AttackType attackType = AttackType.Bullet;
-	private bool isSuicide = false;
-
+	public OnStartShoot StartShootingEvent = new OnStartShoot();
 	public bool isMiningBullet = false;
 	/// <summary>
 	/// Cached trailRenderer. Note that not all bullets have a trail, thus this can be null.
@@ -32,10 +32,8 @@ public class BulletBehaviour : MonoBehaviour
 	/// Rigidbody on the child transform (the one that actually moves when a shot happens)
 	/// </summary>
 	protected Rigidbody2D rigidBody;
-	//	public BodyPartType BodyPartAim { get; private set; };
 
-	public float maxBulletDistance;
-	public bool isRangeLimit = false;
+	private bool isSuicide = false;
 
 	private void Awake()
 	{
@@ -51,6 +49,10 @@ public class BulletBehaviour : MonoBehaviour
 		}
 	}
 
+	public int BulletVelocity
+	{
+		get { return weapon.ProjectileVelocity; }
+	}
 	public Vector2 Direction { get; private set; }
 
 	/// <summary>
@@ -75,27 +77,13 @@ public class BulletBehaviour : MonoBehaviour
 	{
 		isSuicide = false;
 		StartShoot(dir, controlledByPlayer, fromWeapon, targetZone);
-		if (isRangeLimit)
-		{
-			StartCoroutine(countTiles());
-		}
-		
-	}
-
-	public IEnumerator countTiles()
-	{
-		float time = maxBulletDistance / weapon.ProjectileVelocity;
-		yield return WaitFor.Seconds(time);
-		//Begin despawn
-		DespawnThis();
+		StartShootingEvent?.Invoke(new StartShootInfo(controlledByPlayer, fromWeapon, targetZone));
 	}
 
 	protected void StartShoot(Vector2 dir, GameObject controlledByPlayer, Gun fromWeapon, BodyPartType targetZone)
 	{
 		weapon = fromWeapon;
 		Direction = dir;
-		bodyAim = targetZone;
-		shooter = controlledByPlayer;
 
 		transform.parent = controlledByPlayer.transform.parent;
 		Vector3 startPos = new Vector3(dir.x, dir.y, transform.position.z) / 2;
@@ -118,73 +106,18 @@ public class BulletBehaviour : MonoBehaviour
 			trailRenderer.ShotStarted();
 		}
 	}
-
-	/// <summary>
-	/// Invoked when BulletColliderBehavior passes the event up to us.
-	/// </summary>
-	public virtual void HandleCollisionEnter2D(Collision2D coll)
+	public class OnStartShoot : UnityEvent<StartShootInfo> { }
+	public class StartShootInfo
 	{
-		if (coll.gameObject == shooter && !isSuicide)
-		{
-			return;
-		}
-		DespawnThis();
-	}
+		 public readonly GameObject Shooter;
+		 public readonly BodyPartType BodyAim;
+		 public readonly Gun Weapon;
 
-	/// <summary>
-	/// Invoked when BulletColliderBehavior passes the event up to us.
-	/// </summary>
-	public void HandleTriggerEnter2D(Collider2D coll)
-	{
-		//only harm others if it's not a suicide
-		if (coll.gameObject == shooter && !isSuicide)
-		{
-			return;
-		}
-
-		//only harm the shooter if it's a suicide
-		if (coll.gameObject != shooter && isSuicide)
-		{
-			return;
-		}
-
-		//body or object?
-		var livingHealth = coll.GetComponent<LivingHealthBehaviour>();
-		var integrity = coll.GetComponent<Integrity>();
-		if (integrity != null)
-		{
-			//damage object
-			integrity.ApplyDamage(damage, attackType, damageType);
-			Chat.AddAttackMsgToChat(shooter, coll.gameObject, BodyPartType.None, weapon.gameObject);
-			Logger.LogTraceFormat("Hit {0} for {1} with HealthBehaviour! bullet absorbed", Category.Firearms, integrity.gameObject.name, damage);
-		}
-		else
-		{
-			//damage human if there is one
-			if (livingHealth == null || livingHealth.IsDead)
-			{
-				return;
-			}
-
-		// Trigger for things like stuns
-		GetComponent<BulletHitTrigger>()?.BulletHitInteract(coll.gameObject);
-
-			var aim = isSuicide ? bodyAim : bodyAim.Randomize();
-			livingHealth.ApplyDamageToBodypart(shooter, damage, attackType, damageType, aim);
-			Chat.AddAttackMsgToChat(shooter, coll.gameObject, aim, weapon.gameObject);
-			Logger.LogTraceFormat("Hit {0} for {1} with HealthBehaviour! bullet absorbed", Category.Firearms, livingHealth.gameObject.name, damage);
-		}
-
-		DespawnThis();
-	}
-
-	protected virtual void DespawnThis()
-	{
-		if (trailRenderer != null)
-		{
-			trailRenderer.ShotDone();
-		}
-		rigidBody.velocity = Vector2.zero;
-		Despawn.ClientSingle(gameObject);
+		 public StartShootInfo( GameObject shooter, Gun weapon, BodyPartType bodyAim)
+		 {
+			 Shooter = shooter;
+			 Weapon = weapon;
+			 BodyAim = bodyAim;
+		 }
 	}
 }

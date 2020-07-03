@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Weapons.Projectiles.Behaviours;
 
 /// <summary>
 /// Handles the collision logic for BulletBehavior, responding to the rigidbody collision events and passing them up
@@ -14,20 +16,26 @@ public class BulletColliderBehavior : MonoBehaviour
 	/// <summary>
 	/// Cached bulletbehavior in the parent
 	/// </summary>
-	private BulletBehaviour parentBulletBehavior;
+	private List<IBulletBehaviour> bulletBehaviours;
 
 	private void Awake()
 	{
-		parentBulletBehavior = GetComponentInParent<BulletBehaviour>();
+		bulletBehaviours = GetComponentsInParent<IBulletBehaviour>().ToList();
 	}
 
 	private void OnCollisionEnter2D(Collision2D other)
 	{
-		parentBulletBehavior.HandleCollisionEnter2D(other);
+		foreach (var behaviour in bulletBehaviours)
+		{
+			behaviour.HandleCollisionEnter2D(other);
+		}
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		parentBulletBehavior.HandleTriggerEnter2D(other);
+		foreach (var behaviour in bulletBehaviours)
+		{
+			behaviour.HandleTriggerEnter2D(other);
+		}
 	}
 }
