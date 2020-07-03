@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
@@ -15,25 +16,21 @@ using UnityEngine.Events;
 /// </summary>
 public class BulletBehaviour : MonoBehaviour
 {
-
-	[Range(0, 100)]
 	public float damage = 25;
-	protected Gun weapon;
-	public DamageType damageType;
-	public AttackType attackType = AttackType.Bullet;
-	public OnStartShoot StartShootingEvent = new OnStartShoot();
 	public bool isMiningBullet = false;
 	/// <summary>
 	/// Cached trailRenderer. Note that not all bullets have a trail, thus this can be null.
 	/// </summary>
-	protected LocalTrailRenderer trailRenderer;
-
+	private LocalTrailRenderer trailRenderer;
 	/// <summary>
 	/// Rigidbody on the child transform (the one that actually moves when a shot happens)
 	/// </summary>
-	protected Rigidbody2D rigidBody;
-
+	private Rigidbody2D rigidBody;
 	private bool isSuicide = false;
+
+	public Action<GameObject,Gun,bool> OnStartShoot;
+	[SerializeField]private float maxBulletDistance;
+	[SerializeField]private bool isRangeLimited = false;
 
 	private void Awake()
 	{
@@ -49,10 +46,6 @@ public class BulletBehaviour : MonoBehaviour
 		}
 	}
 
-	public int BulletVelocity
-	{
-		get { return weapon.ProjectileVelocity; }
-	}
 	public Vector2 Direction { get; private set; }
 
 	/// <summary>
@@ -77,12 +70,15 @@ public class BulletBehaviour : MonoBehaviour
 	{
 		isSuicide = false;
 		StartShoot(dir, controlledByPlayer, fromWeapon, targetZone);
-		StartShootingEvent?.Invoke(new StartShootInfo(controlledByPlayer, fromWeapon, targetZone));
+		if (isRangeLimited)
+		{
+			StartCoroutine(CountTiles(fromWeapon.ProjectileVelocity));
+		}
 	}
 
 	protected void StartShoot(Vector2 dir, GameObject controlledByPlayer, Gun fromWeapon, BodyPartType targetZone)
 	{
-		weapon = fromWeapon;
+		OnStartShoot?.Invoke(controlledByPlayer,fromWeapon,isSuicide);
 		Direction = dir;
 
 		transform.parent = controlledByPlayer.transform.parent;
@@ -106,18 +102,22 @@ public class BulletBehaviour : MonoBehaviour
 			trailRenderer.ShotStarted();
 		}
 	}
-	public class OnStartShoot : UnityEvent<StartShootInfo> { }
-	public class StartShootInfo
-	{
-		 public readonly GameObject Shooter;
-		 public readonly BodyPartType BodyAim;
-		 public readonly Gun Weapon;
 
-		 public StartShootInfo( GameObject shooter, Gun weapon, BodyPartType bodyAim)
-		 {
-			 Shooter = shooter;
-			 Weapon = weapon;
-			 BodyAim = bodyAim;
-		 }
+	private IEnumerator CountTiles(float bulletVelocity)
+	{
+		float time = maxBulletDistance / bulletVelocity;
+		yield return WaitFor.Seconds(time);
+		//Begin despawn
+		DespawnThis();
+	}
+
+	private void DespawnThis()
+	{
+		if (trailRenderer != null)
+		{
+			trailRenderer.ShotDone();
+		}
+		rigidBody.velocity = Vector2.zero;
+		Despawn.ClientSingle(gameObject);
 	}
 }
